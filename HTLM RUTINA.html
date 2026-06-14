@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rutina Completa 5 Días</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, sans-serif; background: #f5f5f5; color: #111; padding-bottom: 50px; }
+
+  .header { background: #111; color: #fff; padding: 22px 16px 16px; }
+  .header h1 { font-size: 19px; font-weight: 800; margin-bottom: 4px; }
+  .header p { font-size: 12px; color: #888; line-height: 1.5; }
+  .badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .badge { font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 20px; }
+  .badge-red { background: #e8223a; color: #fff; }
+  .badge-gray { background: #333; color: #aaa; }
+
+  .day-tabs { display: flex; background: #fff; border-bottom: 2px solid #eee; overflow-x: auto; }
+  .day-tab { flex-shrink: 0; padding: 11px 14px; font-size: 12px; font-weight: 700; color: #999; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px; white-space: nowrap; }
+  .day-tab.active { color: #e8223a; border-bottom-color: #e8223a; }
+
+  .day-panel { display: none; }
+  .day-panel.active { display: block; }
+
+  /* Block tabs inside each day */
+  .block-tabs { display: flex; overflow-x: auto; background: #fafafa; border-bottom: 1px solid #eee; padding: 0 12px; gap: 4px; }
+  .block-tab { flex-shrink: 0; padding: 9px 10px; font-size: 11px; font-weight: 700; color: #aaa; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; white-space: nowrap; }
+  .block-tab.active { color: #111; border-bottom-color: #111; }
+
+  .block-panel { display: none; padding: 12px; }
+  .block-panel.active { display: block; }
+
+  /* Exercise card */
+  .ex-card { background: #fff; border-radius: 12px; margin-bottom: 12px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
+  .ex-card-top { padding: 14px 14px 10px; }
+  .ex-name { font-size: 15px; font-weight: 800; margin-bottom: 8px; }
+  .ex-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+  .tag { font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 6px; }
+  .tag-gray { background: #f0f0f0; color: #555; }
+  .tag-red { background: #fff0f0; color: #e8223a; }
+  .tag-blue { background: #f0f4ff; color: #2979ff; }
+  .tag-green { background: #f0fff8; color: #00a86b; }
+  .ex-how { font-size: 13px; font-weight: 700; color: #111; margin-bottom: 5px; }
+  .ex-desc { font-size: 12px; color: #555; line-height: 1.6; margin-bottom: 10px; }
+  .ex-tip { font-size: 12px; color: #e8223a; background: #fff0f0; border-radius: 8px; padding: 8px 10px; margin-bottom: 10px; line-height: 1.5; }
+  .img-btn { display: inline-flex; align-items: center; gap: 5px; background: #f0f0f0; color: #333; border: none; border-radius: 8px; padding: 7px 12px; font-size: 11px; font-weight: 700; cursor: pointer; }
+
+  /* Plio phase */
+  .phase-card { background: #fff; border-radius: 12px; margin-bottom: 12px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
+  .phase-head { padding: 12px 14px; border-bottom: 1px solid #f5f5f5; }
+  .phase-title { font-size: 14px; font-weight: 800; }
+  .phase-goal { font-size: 12px; color: #e8223a; margin-top: 3px; }
+  .phase-body { padding: 12px 14px; }
+  .phase-ex { padding: 10px 0; border-bottom: 1px solid #f5f5f5; }
+  .phase-ex:last-of-type { border-bottom: none; }
+  .phase-ex-name { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+  .phase-ex-detail { font-size: 11px; color: #888; margin-bottom: 4px; }
+  .phase-ex-desc { font-size: 12px; color: #555; line-height: 1.5; margin-bottom: 6px; }
+  .phase-signal { font-size: 12px; color: #2979ff; background: #f0f4ff; border-radius: 8px; padding: 8px 12px; margin-top: 10px; }
+
+  /* Cardio */
+  .cardio-card { background: #fff; border-radius: 12px; padding: 14px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); margin-bottom: 12px; }
+  .cardio-title { font-size: 15px; font-weight: 800; margin-bottom: 6px; }
+  .cardio-protocol { background: #f5fff9; border-radius: 8px; padding: 10px 12px; margin: 8px 0; }
+  .cardio-protocol p { font-size: 12px; color: #333; line-height: 1.8; }
+  .cardio-why { font-size: 12px; color: #555; line-height: 1.5; margin-top: 8px; }
+
+  .resumen-day{background:#fff;border-radius:12px;margin-bottom:14px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.07);}
+  .resumen-day-header{padding:12px 14px;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center;}
+  .resumen-day-name{font-size:15px;font-weight:800;}
+  .resumen-day-type{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;}
+  .type-cali{background:#fff0f0;color:#e8223a;}
+  .type-pesas{background:#f0f4ff;color:#2979ff;}
+  .resumen-block{padding:10px 14px;border-bottom:1px solid #f8f8f8;}
+  .resumen-block:last-child{border-bottom:none;}
+  .resumen-block-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#aaa;margin-bottom:6px;}
+  .resumen-ex{font-size:12px;color:#444;padding:2px 0;display:flex;justify-content:space-between;}
+  .resumen-ex span{color:#888;font-size:11px;}
+  .search-input{width:100%;padding:12px 14px;border:2px solid #eee;border-radius:12px;font-size:14px;outline:none;margin-bottom:12px;box-sizing:border-box;}
+  .search-input:focus{border-color:#e8223a;}
+  .search-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
+  .search-tag{font-size:11px;font-weight:700;padding:5px 12px;border-radius:20px;background:#f0f0f0;color:#555;cursor:pointer;border:none;}
+  .search-tag:hover,.search-tag:active{background:#e8223a;color:#fff;}
+  .search-result{background:#fff;border-radius:12px;margin-bottom:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.07);}
+  .search-result-header{padding:8px 14px;background:#fafafa;border-bottom:1px solid #f0f0f0;}
+  .search-result-day{font-size:10px;font-weight:800;text-transform:uppercase;color:#e8223a;}
+  .search-result-block{font-size:10px;color:#aaa;}
+  .search-result-body{padding:10px 14px;}
+  .search-result-name{font-size:14px;font-weight:700;margin-bottom:6px;}
+  .search-result-desc{font-size:12px;color:#666;line-height:1.5;}
+  .no-results{text-align:center;color:#aaa;font-size:13px;padding:30px;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Rutina Completa — 5 Días</h1>
+  <p>Core · Propiocepción · Pliometría · Fuerza · Pierna · Cardio</p>
+  <div class="badges">
+    <span class="badge badge-red">LCA Fase 3</span>
+    <span class="badge badge-gray">Fútbol + Pádel</span>
+    <span class="badge badge-gray">~2 horas/día</span>
+    <span class="badge badge-gray">Glúteo medio</span>
+    <span class="badge badge-gray">VO2 Max</span>
+  </div>
+</div>
+
+<div class="day-tabs">
+  <div class="day-tab active" onclick="showDay('lun')">LUNES</div>
+  <div class="day-tab" onclick="showDay('mar')">MARTES</div>
+  <div class="day-tab" onclick="showDay('mie')">MIÉRC.</div>
+  <div class="day-tab" onclick="showDay('jue')">JUEVES</div>
+  <div class="day-tab" onclick="showDay('vie')">VIERNES</div>
+  <div class="day-tab" onclick="showDay('resumen')" style="color:#e8223a;font-weight:800;">RESUMEN</div>
+  <div class="day-tab" onclick="showDay('buscar')" style="color:#2979ff;font-weight:800;">🔍 BUSCAR</div>
+</div>
+
+<!-- ════════ LUNES ════════ -->
+<div id="lun" class="day-panel active">
+  <div class="block-tabs">
+    <div class="block-tab active" onclick="showBlock('lun','lun-core')">🧱 Core</div>
+    <div class="block-tab" onclick="showBlock('lun','lun-pro')">🧠 Propiocepción</div>
+    <div class="block-tab" onclick="showBlock('lun','lun-plio')">⚡ Pliometría</div>
+    <div class="block-tab" onclick="showBlock('lun','lun-fuerza')">💪 Calistenia</div>
+    <div class="block-tab" onclick="showBlock('lun','lun-pierna')">🦵 Pierna</div>
+    <div class="block-tab" onclick="showBlock('lun','lun-cardio')">🫀 Cardio</div>
+  </div>
+
+  <div id="lun-core" class="block-panel active">
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Elevación de piernas en barra</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 vueltas</span><span class="tag tag-gray">15 reps</span><span class="tag tag-blue">Circuito · sin descanso entre ejercicios</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Colgado de la barra con agarre prono, brazos extendidos. Desde posición colgada, contraé el abdomen y subí las piernas juntas y rectas hasta los 90° o más alto si podés. Bajá lento controlando con el abdomen — nunca dejes caer las piernas. El cuerpo no debe balancearse en ningún momento.</div>
+      <div class="ex-tip">⚠️ Si las piernas no suben rectas, flexioná levemente las rodillas hasta ganar fuerza. El error más común es balancearse — si pasa, pausá y volvé a empezar.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=hanging+leg+raise+bar+abs+exercise&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Abdominal declinado</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 vueltas</span><span class="tag tag-gray">15 reps</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">En banco declinado con los pies asegurados. Brazos cruzados en el pecho o manos detrás de la cabeza sin jalar el cuello. Subí el torso hacia las rodillas contrayendo el abdomen. Bajá lento hasta que la espalda casi toque el banco — sin llegar a relajar completamente el abdomen abajo.</div>
+      <div class="ex-tip">⚠️ No jalés del cuello. El movimiento lo genera el abdomen, no la inercia. Bajada lenta = más trabajo real.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=decline+sit+up+abdominal+exercise&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Plancha frontal</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 vueltas</span><span class="tag tag-gray">60 seg</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Apoyado en antebrazos y puntas de pie. El cuerpo forma una línea recta de la cabeza a los talones. Glúteo apretado, abdomen activado, caderas en línea — ni arriba ni abajo. Mirá hacia el suelo. Respirá profundo y constante durante los 60 segundos.</div>
+      <div class="ex-tip">⚠️ Si la cadera cae o sube significa que el tiempo es excesivo — bajá a 40 segundos y progresá. Calidad sobre tiempo.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=forearm+plank+proper+form+core&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Pallof Press con polea</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 vueltas</span><span class="tag tag-gray">12 reps c/lado</span><span class="tag tag-red">Core anti-rotación</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">De pie de lado a la polea, a la altura del pecho. Agarrá el cable con ambas manos frente al esternón. Empujá las manos hacia adelante extendiendolos brazos completamente y volvé. La resistencia intenta rotarte — vos resistís esa rotación con el core. Hacé todas las reps de un lado, cambiá.</div>
+      <div class="ex-tip">💡 Cuanto más lejos de la polea te parés, más difícil. Empezá cerca y alejate a medida que mejorás. Clave para estabilidad en giros de fútbol y golpes de pádel.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=pallof+press+cable+anti+rotation+core&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+  </div>
+
+  <div id="lun-pro" class="block-panel">
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Sentadilla isométrica en pared</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">45 seg</span><span class="tag tag-red">Pie derecho adelante</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Apoyá la espalda contra la pared y deslizate hacia abajo hasta que las rodillas queden a 90°. El pie derecho ligeramente más adelante que el izquierdo para cargar más ese lado. Mantené la posición sin moverte durante 45 segundos. El cuádriceps derecho trabaja en contracción sostenida sin movimiento articular — esto reentrena la confianza sin impacto.</div>
+      <div class="ex-tip">💡 Es un ejercicio de propiocepción antes que de fuerza. El objetivo es que el cerebro aprenda a sostener carga en la pierna derecha sin activar el reflejo de protección.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=wall+sit+isometric+quad+ACL+rehab&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Step Down Anterior</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">10 reps</span><span class="tag tag-red">Der. primero · Bajada 4 seg</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Parado en el borde de un cajón o escalón en pie derecho. Bajá el pie izquierdo hacia el suelo lentamente en 4 segundos sin llegar a apoyarlo — solo rozarlo. Volvé arriba. El movimiento imita bajar un escalón y reentrena el control excéntrico del cuádriceps unipodal. Es uno de los ejercicios más usados en rehabilitación de LCA Fase 3.</div>
+      <div class="ex-tip">⚠️ La rodilla derecha no debe colapsar hacia adentro en ningún momento. Si pasa, bajá menos altura hasta controlar la alineación. Hacé este frente al espejo las primeras semanas.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=step+down+anterior+ACL+rehab+eccentric+quad&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Monster Walk con banda</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">15 pasos c/lado</span><span class="tag tag-green">Glúteo medio</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Banda elástica en los tobillos. Posición de semisquadilla (rodillas ligeramente flexionadas, cadera hacia atrás). Dá pasos laterales amplios manteniendo la tensión en la banda en todo momento — los pies nunca se juntan completamente. 15 pasos a la derecha, 15 a la izquierda.</div>
+      <div class="ex-tip">💡 El glúteo medio es el principal estabilizador de la rodilla en el plano frontal. Si está débil, la rodilla colapsa hacia adentro en cada paso. Este ejercicio corrige directamente la compensación de la pierna izquierda.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=monster+walk+resistance+band+glute+medius+lateral&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+  </div>
+
+  <div id="lun-plio" class="block-panel">
+    <p style="font-size:12px;color:#888;padding:0 2px 12px;line-height:1.5;">Lunes es <strong>Fase A de pliometría</strong> — foco en control y freno. Avanzás de fase cuando el aterrizaje es limpio sin valgo y sin duda.</p>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Box Jump bilateral</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">5 reps</span><span class="tag tag-gray">Descanso 90"</span><span class="tag tag-red">Aterrizaje suave</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">De pie frente al cajón, pies al ancho de hombros. Flexioná levemente las rodillas, balanceá los brazos y saltá con máxima explosión. Aterrizá en el cajón con ambos pies simultáneamente, rodillas ligeramente flexionadas absorbiendo el impacto suavemente. Bajá caminando — nunca saltando hacia abajo.</div>
+      <div class="ex-tip">⚠️ El aterrizaje es lo más importante — no la altura. Aterrizá silencioso. Si hacés ruido al caer, el impacto lo está absorbiendo la articulación en vez del músculo.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=box+jump+soft+landing+plyometric+ACL&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Skater Jump corto</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">6 reps c/lado</span><span class="tag tag-gray">Descanso 60"</span><span class="tag tag-red">Aguantá 2 seg al aterrizar</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Parado en pie derecho, saltá lateralmente hacia la izquierda aterrizando en pie izquierdo. Aguantá 2 segundos completamente inmóvil antes de volver. El salto es corto — la distancia no importa, importa el control del aterrizaje en un solo pie. Alternás derecha a izquierda.</div>
+      <div class="ex-tip">💡 Este es el ejercicio que más directamente rompe el miedo al aterrizaje unipodal. La pausa de 2 segundos es obligatoria — le da tiempo al cerebro a registrar que la rodilla está estable.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=skater+jump+lateral+bound+single+leg+landing+ACL&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+  </div>
+
+  <div id="lun-fuerza" class="block-panel">
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Dominadas agarre abierto</div>
+      <div class="ex-tags"><span class="tag tag-gray">4 series</span><span class="tag tag-gray">8–10 reps</span><span class="tag tag-gray">Descanso 2'</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Agarre prono (palmas hacia adelante), manos más anchas que los hombros. Desde posición colgada con brazos extendidos, contraé el dorsal y subí hasta que el mentón pase la barra. Bajá lento en 2–3 segundos volviendo a la extensión completa. No uses impulso de caderas.</div>
+      <div class="ex-tip">💡 Si no llegás a 8 reps limpias usá banda de asistencia. Nunca hagas repeticiones parciales — rango completo siempre. Las dominadas son el ejercicio que más construye el V-taper.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=wide+grip+pull+up+proper+form+back&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Dominadas agarre cerrado / neutro</div>
+      <div class="ex-tags"><span class="tag tag-gray">4 series</span><span class="tag tag-gray">8–10 reps</span><span class="tag tag-gray">Descanso 2'</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Agarre supino (palmas hacia vos) o neutro con manos juntas. Codos pegados al cuerpo durante toda la subida. Subí hasta que el pecho toque la barra si podés. Bajá lento. Activa más el dorsal inferior y el bíceps que el agarre abierto.</div>
+      <div class="ex-tip">⚠️ No dejés que los codos se abran — si se abran perdés la activación del dorsal inferior. Pensá en llevar los codos hacia las caderas.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=close+grip+chin+up+underhand+back+bicep&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Fondos en paralelas</div>
+      <div class="ex-tags"><span class="tag tag-gray">4 series</span><span class="tag tag-gray">10–12 reps</span><span class="tag tag-gray">Descanso 90"</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Subí a las paralelas con brazos extendidos. Inclinación leve del torso hacia adelante para mayor activación del pectoral. Bajá lentamente hasta que los codos lleguen a 90° mínimo. Subí de forma explosiva sin bloquear los codos arriba. El torso inclinado es la clave — si vas completamente vertical trabajás más tríceps que pectoral.</div>
+      <div class="ex-tip">💡 Para hacer esto más difícil agregá lastre con cinturón. Para hacerlo más fácil usá banda de asistencia bajo los pies.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=parallel+bar+dips+chest+forward+lean+pectoral&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Remo en TRX</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">12 reps</span><span class="tag tag-gray">Descanso 75"</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Agarrá las asas del TRX, inclinás el cuerpo hacia atrás con los talones en el suelo. Partís con brazos extendidos. Tirá del TRX llevando el pecho hacia las manos con los codos a 90° arriba. Volvé lento. Cuanto más horizontal sea tu cuerpo, más difícil. El cuerpo debe mantenerse rígido como una tabla — no permitas que la cadera caiga.</div>
+      <div class="ex-tip">💡 Este ejercicio mejora la postura deportiva y trabaja la espalda media que se necesita para el golpe en pádel. Progresá inclinándote más cada semana.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=TRX+inverted+row+back+exercise+suspension&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Farmer Carry</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">30 metros</span><span class="tag tag-gray">Descanso 90"</span><span class="tag tag-red">Carga máxima con postura</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Tomá una mancuerna o kettlebell pesada en cada mano. De pie, erguido, hombros hacia atrás y abajo, core activado. Caminá 30 metros sin que los hombros caigan ni el torso se incline. La carga debe ser tan pesada que sea un desafío mantener la postura pero no tan pesada que la pierdas.</div>
+      <div class="ex-tip">💡 Uno de los ejercicios más completos que existen — trabaja core, grip, trapecio, postura y capacidad de carga funcional simultáneamente. Subestimado por casi todo el mundo.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=farmer+carry+dumbbell+walk+core+grip+strength&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+  </div>
+
+  <div id="lun-pierna" class="block-panel">
+    <p style="font-size:12px;color:#e8223a;font-weight:700;padding:0 2px 10px;">🦵 Todos los ejercicios empiezan por la pierna derecha. Bajada siempre en 3–4 segundos.</p>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Hip Thrust bilateral con barra</div>
+      <div class="ex-tags"><span class="tag tag-gray">4 series</span><span class="tag tag-gray">10 reps</span><span class="tag tag-red">Bajada 3 seg</span><span class="tag tag-gray">Pesado</span><span class="tag tag-gray">Descanso 2'</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Hombros apoyados en el banco, barra sobre las caderas con almohadilla. Pies al ancho de caderas, rodillas a 90°. Empujá la barra hacia arriba desde los talones hasta que el cuerpo forme una línea recta de hombros a rodillas. Bajá lento en 3 segundos. Apretá el glúteo arriba durante 1 segundo antes de bajar.</div>
+      <div class="ex-tip">💡 Es el ejercicio que más activa el glúteo mayor. Progresar carga cada semana. El glúteo fuerte protege el LCA desde arriba controlando la posición de la cadera.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=barbell+hip+thrust+glute+exercise+form&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Hip Thrust unipodal — derecha primero</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">12 reps c/pierna</span><span class="tag tag-red">Der. primero · Bajada 3 seg</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Igual que el bilateral pero con una pierna levantada y extendida. Toda la carga va en la pierna de apoyo. Empujá desde el talón derecho. El glúteo mayor de la pierna derecha trabaja para estabilizar la rodilla desde arriba — esto protege directamente el LCA. Bajá en 3 segundos.</div>
+      <div class="ex-tip">⚠️ Siempre pierna derecha primero. Si notás que un lado es significativamente más débil que el otro, no compensés — hacé las mismas reps a cada lado aunque se sientan distintas.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=single+leg+hip+thrust+unilateral+glute+ACL&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Zancada cruzada / Curtsy Lunge</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">10 reps c/pierna</span><span class="tag tag-red">Der. primero · Bajada 3 seg</span><span class="tag tag-green">Glúteo medio</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Parado en pie derecho. Llevá el pie izquierdo hacia atrás cruzándolo detrás de la pierna derecha como si fueras a hacer una reverencia. Bajá doblando la rodilla delantera en 3 segundos. Volvé a la posición inicial. Al cruzar la línea media activas el glúteo medio de forma más intensa que en la zancada convencional.</div>
+      <div class="ex-tip">💡 Activador número uno del glúteo medio después del clamshell. Si el glúteo medio derecho está débil, la rodilla colapsa hacia adentro en cada paso — esto lo corrige directamente.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=curtsy+lunge+glute+medius+crossover+exercise&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+  </div>
+
+  <div id="lun-cardio" class="block-panel">
+    <div class="cardio-card">
+      <div class="cardio-title">🫀 Cardio Zona 2 — 18–20 minutos</div>
+      <div class="cardio-protocol">
+        <p><strong>Modalidad:</strong> Trote continuo en pista, bicicleta estática o remo</p>
+        <p><strong>Intensidad:</strong> 65–70% de la frecuencia cardíaca máxima</p>
+        <p><strong>Referencia práctica:</strong> Podés hablar en oraciones completas mientras lo hacés. Si no podés hablar, bajá la intensidad.</p>
+        <p><strong>FC máxima estimada:</strong> 220 menos tu edad</p>
+      </div>
+      <div class="cardio-why">La Zona 2 construye la base aeróbica que alimenta todo lo demás. Mejora la eficiencia mitocondrial, acelera la recuperación entre sesiones y es el fundamento del VO2 max. Sin esta base, los intervalos de alta intensidad del martes y el sprint del jueves no tienen donde apoyarse.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ MARTES ════════ -->
+<div id="mar" class="day-panel">
+  <div class="block-tabs">
+    <div class="block-tab active" onclick="showBlock('mar','mar-core')">🧱 Core</div>
+    <div class="block-tab" onclick="showBlock('mar','mar-pro')">🧠 Propiocepción</div>
+    <div class="block-tab" onclick="showBlock('mar','mar-fuerza')">🏋️ Pesas</div>
+    <div class="block-tab" onclick="showBlock('mar','mar-pierna')">🦵 Pierna</div>
+    <div class="block-tab" onclick="showBlock('mar','mar-cardio')">🫀 VO2 Max</div>
+  </div>
+
+  <div id="mar-core" class="block-panel active">
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Elevación de piernas en barra</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 vueltas</span><span class="tag tag-gray">15 reps</span><span class="tag tag-blue">Circuito</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Igual que el lunes. Colgado de la barra, piernas juntas subiendo a 90° sin balanceo. Bajá lento con control abdominal constante.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=hanging+leg+raise+bar+abs+exercise&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Abdominal declinado</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 vueltas</span><span class="tag tag-gray">15 reps</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">En banco declinado. Subí con el abdomen, no con inercia. Sin jalar del cuello. Bajá lento.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=decline+sit+up+abdominal+exercise&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Plancha frontal</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 vueltas</span><span class="tag tag-gray">60 seg</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Antebrazos y puntas de pie. Cuerpo rígido, glúteo apretado, cadera en línea. Respirá profundo.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=forearm+plank+proper+form+core&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Wood Chopper con cable</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 vueltas</span><span class="tag tag-gray">12 reps c/lado</span><span class="tag tag-red">Fuerza rotacional</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Polea alta. Agarrá con ambas manos y tirá en diagonal de arriba hacia abajo cruzando el cuerpo, como si cortaras leña. Los brazos van casi extendidos. El movimiento viene de la rotación del torso, no de los brazos. Hacé todas las reps de un lado, cambiá.</div>
+      <div class="ex-tip">💡 Fuerza rotacional directamente transferible al golpe en pádel y los giros con balón en fútbol.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=cable+wood+chopper+rotational+core+exercise&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+  </div>
+
+  <div id="mar-pro" class="block-panel">
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Star Excursion Balance Test (SEBT)</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">6 direcciones</span><span class="tag tag-red">Pie derecho</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Parado en pie derecho en el centro de una estrella imaginaria. Con el pie izquierdo alcanzás hacia adelante, atrás, al costado, en diagonal — 6 direcciones distintas — sin perder el equilibrio ni apoyar el pie. Volvés al centro después de cada alcance. El pie de alcance apenas toca el suelo, no se apoya.</div>
+      <div class="ex-tip">💡 Es el ejercicio con mayor evidencia científica para recuperación funcional de LCA. Evalúa y entrena el control dinámico simultáneamente. Con el tiempo notarás que alcanzás más lejos en cada dirección.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=star+excursion+balance+test+SEBT+ACL+single+leg&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Equilibrio en BOSU — pie derecho</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">40 seg</span><span class="tag tag-blue">S1: ojos abiertos · S2–3: ojos cerrados</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Parado en pie derecho sobre el BOSU (lado domo arriba o plano arriba para más dificultad). Primera serie con ojos abiertos. Segunda y tercera con ojos cerrados. Sin visión el sistema nervioso trabaja exclusivamente con información propioceptiva del tobillo, rodilla y cadera.</div>
+      <div class="ex-tip">⚠️ Tené algo cerca para agarrarte las primeras veces. El objetivo no es no caerse — es que el sistema nervioso aprenda de los desequilibrios. Cada corrección es aprendizaje.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=single+leg+BOSU+balance+eyes+closed+proprioception+ACL&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Clamshell con banda</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">15 reps c/lado</span><span class="tag tag-red">Der. primero</span><span class="tag tag-green">Glúteo medio</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Acostado de lado con banda en las rodillas, caderas a 45° y rodillas a 90°. Sin mover la cadera, abrí la rodilla superior hacia arriba como si fuera una almeja abriendo. Volvé lento. La cadera no debe rotar — solo la rodilla se abre.</div>
+      <div class="ex-tip">💡 Activación pura de glúteo medio. Hacé este ejercicio antes de cualquier carga articular del día — el glúteo medio activado protege la rodilla en todos los ejercicios que siguen.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=clamshell+exercise+resistance+band+glute+medius+side+lying&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+  </div>
+
+  <div id="mar-fuerza" class="block-panel">
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Press inclinado con mancuernas</div>
+      <div class="ex-tags"><span class="tag tag-gray">4 series</span><span class="tag tag-gray">10 reps</span><span class="tag tag-gray">Descanso 90"</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Banco a 30–45°. Mancuernas a la altura del pecho, codos a 45° del torso. Empujá hacia arriba y levemente hacia adentro hasta casi juntar las mancuernas arriba. Bajá lento hasta que los codos queden a la altura del pecho. Escápulas retraídas en todo momento.</div>
+      <div class="ex-tip">💡 Define el pectoral superior — visualmente el más importante para el físico estético. Más rango de movimiento que con barra.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=incline+dumbbell+press+upper+chest+form&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Press plano con mancuernas</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">10 reps</span><span class="tag tag-gray">Descanso 90"</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Banco plano. Mancuernas a los costados del pecho. Empujá hacia arriba y levemente hacia adentro. Bajá lento hasta estiramiento completo del pectoral. Mayor amplitud de movimiento que con barra — aprovechalo bajando bien.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=flat+dumbbell+bench+press+chest+exercise+form&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Press militar con mancuernas</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">10 reps</span><span class="tag tag-gray">Descanso 90"</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">De pie o sentado, core activado. Mancuernas a la altura de los hombros, codos a 90°. Empujá hacia arriba sin hiperextender la zona lumbar. Bajá lento hasta la altura de los hombros. No bloquees los codos arriba.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=dumbbell+shoulder+press+military+standing+form&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Remo con mancuerna</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">10 reps c/lado</span><span class="tag tag-gray">Descanso 75"</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Apoyá una rodilla y la mano del mismo lado en el banco. La mancuerna cuelga del brazo libre. Tirá la mancuerna hacia la cadera llevando el codo atrás. No rotés el torso. Apretá el dorsal en la parte alta. Bajá lento hasta extensión completa.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=dumbbell+row+one+arm+back+exercise+form&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Face Pull con polea</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">15 reps</span><span class="tag tag-gray">Descanso 60"</span><span class="tag tag-red">Nunca saltear</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Polea alta con cuerda. Agarrá con ambas manos, palmas hacia abajo. Tirá la cuerda hacia la cara separando los extremos a los costados de la cabeza, llevando los codos a 90° y hacia atrás. Volvé lento. Trabaja el deltoides posterior y el manguito rotador.</div>
+      <div class="ex-tip">⚠️ Fundamental para la salud del hombro en pádel y para mantener la postura. Nunca saltear este ejercicio — es preventivo tanto como estético.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=face+pull+cable+rope+rear+deltoid+rotator+cuff&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Curl martillo con mancuernas</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">10 reps</span><span class="tag tag-gray">Descanso 60"</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">De pie, mancuernas con agarre neutro (pulgares arriba). Sin balanceo de torso, subí las mancuernas flexionando el codo hasta que el antebrazo quede vertical. Bajá lento. Trabaja el bíceps braquial y el braquiorradial.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=hammer+curl+dumbbell+neutral+grip+bicep&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Extensión tríceps en cuerda (polea)</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">12 reps</span><span class="tag tag-gray">Descanso 60"</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Polea alta con cuerda. Codos fijos a los costados del cuerpo. Empujá hacia abajo separando los extremos de la cuerda al final del movimiento. Extensión completa abajo. Volvé lento sin que los codos se muevan.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=tricep+rope+pushdown+cable+extension+form&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+  </div>
+
+  <div id="mar-pierna" class="block-panel">
+    <p style="font-size:12px;color:#e8223a;font-weight:700;padding:0 2px 10px;">🦵 Todos los ejercicios empiezan por la pierna derecha. Bajada siempre en 3–4 segundos.</p>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Sentadilla búlgara con mancuernas</div>
+      <div class="ex-tags"><span class="tag tag-gray">4 series</span><span class="tag tag-gray">10 reps c/pierna</span><span class="tag tag-red">Der. primero · Bajada 4 seg</span><span class="tag tag-gray">Descanso 2'</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Pie trasero elevado en banco detrás. Pie delantero (derecho) lo suficientemente adelante para que la rodilla no pase la punta del pie al bajar. Bajá en 4 segundos hasta que la rodilla trasera casi toque el suelo. Subí empujando desde el talón delantero. Sin valgo (rodilla hacia adentro) en ningún momento.</div>
+      <div class="ex-tip">⚠️ El tempo de 4 segundos en la bajada es obligatorio — convierte este ejercicio en trabajo excéntrico que protege el LCA. Sin tempo es solo una sentadilla.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=bulgarian+split+squat+dumbbell+eccentric+tempo+ACL&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Peso muerto convencional con barra</div>
+      <div class="ex-tags"><span class="tag tag-gray">4 series</span><span class="tag tag-gray">6 reps</span><span class="tag tag-red">Pesado · Bajada 3 seg</span><span class="tag tag-gray">Descanso 2'30"</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Barra en el suelo frente a los pies. Agarre al ancho de hombros. Espalda neutra, pecho hacia arriba, mirada al frente. Empujá el suelo con los talones para subir — no "jalés" la barra. Bajá lento en 3 segundos manteniendo la barra cerca del cuerpo en todo momento.</div>
+      <div class="ex-tip">💡 El ejercicio bilateral más completo para fuerza funcional. Trabaja isquios, glúteo, lumbar y trapecio simultáneamente. Progresá carga semanalmente.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=conventional+deadlift+barbell+form+technique&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Curl femoral en máquina — acostado</div>
+      <div class="ex-tags"><span class="tag tag-gray">4 series</span><span class="tag tag-gray">10 reps</span><span class="tag tag-red">Bajada 4 seg · OBLIGATORIO</span><span class="tag tag-gray">Descanso 90"</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Acostado boca abajo en la máquina, tobillo bajo el rodillo. Flexioná las rodillas llevando los talones hacia el glúteo. En la parte alta apretá el isquio 1 segundo. Bajá en 4 segundos — esta bajada lenta es la fase excéntrica que realmente fortalece el isquio como freno del LCA.</div>
+      <div class="ex-tip">⚠️ La bajada en 4 segundos no es opcional. Los isquiotibiales actúan como freno activo de la tibia — sin fuerza excéntrica, esa carga la absorbe el ligamento en cada desaceleración en el campo.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=lying+leg+curl+machine+hamstring+eccentric+tempo&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Isquiotibiales caminando sobre roller</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">8 reps</span><span class="tag tag-red">Lento y controlado</span><span class="tag tag-gray">Descanso 90"</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Acostado boca arriba, talones sobre el roller con piernas casi extendidas. Levantá la cadera del suelo. Caminá con los talones hacia adelante alejando el roller del cuerpo (isquios se estiran) y luego volvé jalando (se contraen). La cadera se mantiene elevada todo el tiempo. Movimiento lento en ambas direcciones.</div>
+      <div class="ex-tip">💡 Trabaja el isquio en todo el rango — excéntrico cuando el roller aleja y concéntrico cuando vuelve. Más completo que la máquina para la función real del isquio en el fútbol.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=hamstring+roller+walkout+bridge+eccentric+concentric&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Side Step con banda — glúteo medio</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">15 pasos c/lado</span><span class="tag tag-green">Glúteo medio</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Banda en rodillas o tobillos. En semisquadilla, dá pasos laterales amplios manteniendo tensión en la banda. Los pies no se juntan completamente. 15 pasos a la derecha, 15 a la izquierda. Tronco erguido en todo momento.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=lateral+band+walk+side+step+glute+medius+knee&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+  </div>
+
+  <div id="mar-cardio" class="block-panel">
+    <div class="cardio-card">
+      <div class="cardio-title">🫀 VO2 Max — Intervalos 2'/2' — 5 rondas</div>
+      <div class="cardio-protocol">
+        <p><strong>Protocolo:</strong> 2 minutos de trabajo intenso → 2 minutos de recuperación suave → repetir 5 veces</p>
+        <p><strong>Intensidad trabajo:</strong> 85–90% FC máxima — no podés hablar</p>
+        <p><strong>Intensidad recuperación:</strong> Caminata o trote muy suave</p>
+        <p><strong>Modalidad:</strong> Pista, bicicleta estática o elíptica</p>
+        <p><strong>Duración total:</strong> 20 minutos</p>
+      </div>
+      <div class="cardio-why">Este es el bloque más importante para recuperar el VO2 max y la capacidad de jugar 80 minutos. Los intervalos de 2 minutos son suficientemente largos para estresar el sistema aeróbico y lo suficientemente cortos para mantener alta intensidad. En 6–8 semanas de trabajo consistente la diferencia es notable.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ MIÉRCOLES ════════ -->
+<div id="mie" class="day-panel">
+  <div class="block-tabs">
+    <div class="block-tab active" onclick="showBlock('mie','mie-core')">🧱 Core</div>
+    <div class="block-tab" onclick="showBlock('mie','mie-pro')">🧠 Propiocepción</div>
+    <div class="block-tab" onclick="showBlock('mie','mie-plio')">⚡ Pliometría</div>
+    <div class="block-tab" onclick="showBlock('mie','mie-fuerza')">💪 Calistenia</div>
+    <div class="block-tab" onclick="showBlock('mie','mie-pierna')">🦵 Pierna</div>
+    <div class="block-tab" onclick="showBlock('mie','mie-cardio')">🫀 Cardio</div>
+  </div>
+
+  <div id="mie-core" class="block-panel active">
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Elevación de piernas en barra</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 vueltas</span><span class="tag tag-gray">15 reps</span><span class="tag tag-blue">Circuito</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Sin balanceo. Tensión abdominal constante. Bajada controlada.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=hanging+leg+raise+bar+abs+exercise&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Abdominal declinado</div>
+      <div class="ex-tags"><span class="stat tag tag-gray">3 vueltas</span><span class="tag tag-gray">15 reps</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Sin inercia. Subí con el abdomen. Bajá lento.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=decline+sit+up+abdominal+exercise&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">TRX Circles</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 vueltas</span><span class="tag tag-gray">10 reps c/lado</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">En posición de plancha con los pies en las asas del TRX. Hacé círculos lentos con las caderas — primero en un sentido, luego al revés. La cadera no debe caer en ningún momento. Activa los oblicuos y los estabilizadores profundos del core.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=TRX+circles+hip+plank+core+obliques&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Plancha lateral con elevación de cadera</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 vueltas</span><span class="tag tag-gray">12 reps c/lado</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Apoyado en antebrazo lateral y borde del pie. Bajá la cadera casi al suelo sin tocar y subí hasta que el cuerpo forme una línea recta. Activa oblicuos y glúteo medio simultáneamente en cada repetición.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=side+plank+hip+dip+raise+obliques+core&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+  </div>
+
+  <div id="mie-pro" class="block-panel">
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Peso muerto unipodal — ojos cerrados</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">8 reps</span><span class="tag tag-red">Pie derecho · Bajada 3 seg</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Parado en pie derecho, una mancuerna liviana en la mano opuesta. Inclinación del torso hacia adelante mientras la pierna libre sube atrás, manteniendo cadera cuadrada y espalda plana. Bajada en 3 segundos. Cerrá los ojos en la segunda y tercera serie — sin visión el cerebro activa todos los receptores propioceptivos de la cadena posterior.</div>
+      <div class="ex-tip">💡 Es el ejercicio más completo de propiocepción con carga. Combina equilibrio, fuerza excéntrica e información sensorial sin visión.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=single+leg+deadlift+eyes+closed+proprioception+balance+ACL&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Depth Drop bilateral</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">5 reps</span><span class="tag tag-red">Frenada completa · Sin salto</span><span class="tag tag-gray">Descanso 90"</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Parado en el borde de un cajón bajo. Dá un paso hacia adelante y aterrizá en ambos pies simultáneamente. Frenate completamente — sin rebotar, sin saltar. Rodillas alineadas, absorción del impacto con tobillo, rodilla y cadera. Volvé arriba y repetí. El objetivo es entrenar la absorción de impacto, no el salto.</div>
+      <div class="ex-tip">💡 Rompe el reflejo de protección ante el impacto. Cada repetición le enseña al cerebro que la rodilla puede manejar la carga del aterrizaje sin que el LCA ceda.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=depth+drop+landing+bilateral+ACL+neuromuscular&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Clamshell con banda</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">15 reps c/lado</span><span class="tag tag-red">Der. primero</span><span class="tag tag-green">Glúteo medio</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">De lado con banda en rodillas. Abrí la rodilla superior sin mover la cadera. Glúteo medio puro. Empezá por el lado derecho.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=clamshell+exercise+resistance+band+glute+medius+side+lying&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+  </div>
+
+  <div id="mie-plio" class="block-panel">
+    <p style="font-size:12px;color:#888;padding:0 2px 12px;line-height:1.5;">Miércoles es <strong>Fase A–B según tu progreso</strong>. Empezás en Fase A y avanzás cuando el aterrizaje es limpio y sin duda.</p>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Saltos laterales bilaterales</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">8 reps c/lado</span><span class="tag tag-gray">Descanso 60"</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Saltá lateralmente en dos pies de lado a lado. Aterrizá suave absorbiendo con las rodillas. Pausa de 1 segundo antes de saltar al otro lado. Mantené la alineación de rodillas — no dejes que colapsen hacia adentro en el aterrizaje.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=lateral+jump+bilateral+plyometric+soft+landing&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Bulgarian Jump Squat — derecha primero</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">5 reps c/pierna</span><span class="tag tag-red">Der. primero · Descanso 90"</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Pie trasero elevado en banco. Bajá a la zancada y desde abajo explotá hacia arriba con máxima potencia. Aterrizá controlado. Pierna derecha siempre primero. Empezá sin peso — el propio cuerpo ya es suficientemente exigente para este ejercicio pliométrico.</div>
+      <div class="ex-tip">⚠️ Si el aterrizaje no es limpio — rodilla hacia adentro o pérdida de equilibrio — volvé al salto bilateral hasta mejorar el control.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=bulgarian+split+squat+jump+plyometric+power&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+  </div>
+
+  <div id="mie-fuerza" class="block-panel">
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Dominadas agarre abierto</div>
+      <div class="ex-tags"><span class="tag tag-gray">4 series</span><span class="tag tag-gray">8–10 reps</span><span class="tag tag-gray">Descanso 2'</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Agarre prono ancho. Rango completo. Pecho al frente en la subida. Bajada lenta en 2–3 segundos.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=wide+grip+pull+up+back+exercise+form&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Fondos en paralelas</div>
+      <div class="ex-tags"><span class="tag tag-gray">4 series</span><span class="tag tag-gray">10–12 reps</span><span class="tag tag-gray">Descanso 90"</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Inclinación al frente para mayor pectoral. Bajá a 90° de codo mínimo. Subida explosiva sin bloquear los codos.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=dips+parallel+bars+chest+forward+lean&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Flexiones en TRX</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">12 reps</span><span class="tag tag-gray">Descanso 75"</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Manos en las asas del TRX, cuerpo en diagonal. Flexión de brazos manteniendo el cuerpo rígido como tabla. Cuanto más horizontal tu cuerpo, más difícil. Progresá inclinándote más cada semana.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=TRX+push+up+suspension+trainer+chest&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Remo en TRX</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">12 reps</span><span class="tag tag-gray">Descanso 75"</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Cuerpo inclinado atrás, talones en el suelo. Tirá llevando el pecho a las manos. Más horizontal = más difícil. Cuerpo rígido como tabla en todo momento.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=TRX+inverted+row+back+suspension+trainer&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Farmer Carry</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">30 metros</span><span class="tag tag-gray">Descanso 90"</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Carga pesada en ambas manos. Caminá erguido, hombros atrás. Core activado todo el recorrido.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=farmer+carry+walk+heavy+dumbbell+core+grip&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+  </div>
+
+  <div id="mie-pierna" class="block-panel">
+    <p style="font-size:12px;color:#e8223a;font-weight:700;padding:0 2px 10px;">🦵 Todos los ejercicios empiezan por la pierna derecha. Bajada siempre en 3–4 segundos.</p>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Leg Curl en TRX — acostado boca arriba</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">10 reps</span><span class="tag tag-red">Bajada 3 seg</span><span class="tag tag-gray">Descanso 90"</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Acostado boca arriba con los talones en las asas del TRX, piernas casi extendidas. Levantá la cadera del suelo formando una línea recta. Desde esa posición, flexioná las rodillas jalando los talones hacia el glúteo. Bajá lento en 3 segundos volviendo a piernas extendidas sin bajar la cadera.</div>
+      <div class="ex-tip">💡 Trabaja isquiotibiales, glúteo y core simultáneamente. Más funcional que la máquina aislada porque los isquios trabajan en dos articulaciones al mismo tiempo — igual que en el fútbol.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=TRX+hamstring+curl+leg+curl+bridge+suspension&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Step Up explosivo — derecha primero</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">8 reps c/pierna</span><span class="tag tag-red">Der. primero · Bajada 3 seg</span><span class="tag tag-gray">Descanso 90"</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Cajón a altura de rodilla. Pie derecho arriba. Empujá solo con la pierna de arriba para subir explosivamente — la pierna trasera no ayuda. Bajá lento en 3 segundos. La explosión en la subida y el control en la bajada son lo que construye potencia funcional para el fútbol.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=step+up+box+explosive+single+leg+power&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Zancada búlgara con mancuernas — derecha primero</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">10 reps c/pierna</span><span class="tag tag-red">Der. primero · Bajada 4 seg</span><span class="tag tag-gray">Descanso 90"</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Pie trasero elevado. Rodilla delantera sin valgo. Bajada en 4 segundos. Pierna derecha primero siempre.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=bulgarian+split+squat+dumbbell+eccentric+form&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Monster Walk con banda</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">15 pasos c/lado</span><span class="tag tag-green">Glúteo medio</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Banda en tobillos. Semisquadilla, pasos laterales amplios. Tensión en la banda en todo momento. Activa el glúteo medio y corrige la compensación de la pierna izquierda.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=monster+walk+lateral+band+glute+medius&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+  </div>
+
+  <div id="mie-cardio" class="block-panel">
+    <div class="cardio-card">
+      <div class="cardio-title">🫀 Cardio Zona 2 — 18–20 minutos</div>
+      <div class="cardio-protocol">
+        <p><strong>Modalidad:</strong> Trote continuo, bicicleta o remo</p>
+        <p><strong>Intensidad:</strong> 65–70% FC máxima — ritmo conversacional</p>
+        <p><strong>Duración:</strong> 18–20 minutos continuos</p>
+      </div>
+      <div class="cardio-why">Miércoles es el día de recuperación activa cardiovascular. La Zona 2 acelera la recuperación muscular y construye la base aeróbica sin agregar estrés al sistema nervioso que ya trabajó fuerte en pliometría y calistenia.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ JUEVES ════════ -->
+<div id="jue" class="day-panel">
+  <div class="block-tabs">
+    <div class="block-tab active" onclick="showBlock('jue','jue-core')">🧱 Core</div>
+    <div class="block-tab" onclick="showBlock('jue','jue-pro')">🧠 Propiocepción</div>
+    <div class="block-tab" onclick="showBlock('jue','jue-fuerza')">🏋️ Pesas</div>
+    <div class="block-tab" onclick="showBlock('jue','jue-pierna')">🦵 Pierna</div>
+    <div class="block-tab" onclick="showBlock('jue','jue-cardio')">🫀 Sprint</div>
+  </div>
+
+  <div id="jue-core" class="block-panel active">
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Elevación de piernas en barra</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 vueltas</span><span class="tag tag-gray">15 reps</span><span class="tag tag-blue">Circuito</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Sin balanceo. Tensión abdominal constante.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=hanging+leg+raise+abs+bar&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Abdominal declinado</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 vueltas</span><span class="tag tag-gray">15 reps</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Sin inercia. Subí con el abdomen.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=decline+sit+up+abs+exercise&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Plancha frontal</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 vueltas</span><span class="tag tag-gray">60 seg</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Cuerpo rígido. Glúteo apretado. No hundas la cadera.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=forearm+plank+core+proper+form&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Rotaciones en TRX</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 vueltas</span><span class="tag tag-gray">10 reps c/lado</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Agarrá el TRX con ambas manos extendidas al frente. Rotá el torso de lado a lado manteniendo la cadera estable. El movimiento viene del torso, no de los brazos. Fuerza rotacional directamente transferible al golpe en pádel y los giros en fútbol.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=TRX+rotation+core+rotational+power+exercise&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+  </div>
+
+  <div id="jue-pro" class="block-panel">
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Star Excursion en BOSU — pie derecho</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">6 direcciones</span><span class="tag tag-red">Pie derecho · Nivel avanzado</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Igual que el Star Excursion del martes pero parado sobre el BOSU en pie derecho. La superficie inestable multiplica el desafío propioceptivo. Si al principio es demasiado difícil, hacélo en suelo plano y avanzá al BOSU cuando tengas control.</div>
+      <div class="ex-tip">💡 Es el ejercicio propioceptivo más avanzado del programa. Combina inestabilidad de superficie, control dinámico y alcance en múltiples planos.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=star+excursion+BOSU+balance+single+leg+advanced+ACL&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Recepción de pelota parado en pie derecho</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">10 recepciones</span><span class="tag tag-red">Pie derecho</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Parado en pie derecho, lanzá una pelota contra la pared y recibila. El cuerpo debe reaccionar automáticamente al impacto de la recepción sin tiempo de preparación. Podés hacerlo sobre BOSU para mayor dificultad. Es el ejercicio más específico para el retorno al fútbol — simula los ajustes de equilibrio que ocurren durante el juego.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=single+leg+balance+ball+toss+catch+proprioception+soccer&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Elevación lateral de cadera en suelo</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">15 reps c/lado</span><span class="tag tag-red">Der. primero</span><span class="tag tag-green">Glúteo medio</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">De lado en el suelo, piernas extendidas. Levantá la pierna superior en abducción (hacia arriba) manteniendo el pie en flex. Bajá lento. Activación pura del glúteo medio sin carga articular. Podés agregar una banda en los tobillos para mayor resistencia.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=side+lying+hip+abduction+glute+medius+exercise&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+  </div>
+
+  <div id="jue-fuerza" class="block-panel">
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Press inclinado con mancuernas</div>
+      <div class="ex-tags"><span class="tag tag-gray">4 series</span><span class="tag tag-gray">10 reps</span><span class="tag tag-gray">Descanso 90"</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Banco a 30–45°. Bajá hasta estiramiento completo del pectoral superior. Subí con intención.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=incline+dumbbell+press+chest+upper+form&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Elevaciones laterales con mancuernas</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">15 reps</span><span class="tag tag-gray">Descanso 60"</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">De pie, mancuernas a los costados. Sin inercia, subí los brazos lateralmente hasta la altura de los hombros con el codo ligeramente flexionado. Bajá lento. Define la anchura del hombro — el deltoides medial es lo que da el aspecto atlético de hombros anchos.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=lateral+raise+dumbbell+shoulder+medial+deltoid&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Jalón al pecho agarre ancho</div>
+      <div class="ex-tags"><span class="tag tag-gray">4 series</span><span class="tag tag-gray">10 reps</span><span class="tag tag-gray">Descanso 90"</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Sentado en la máquina, agarre prono ancho. Pecho hacia arriba y levemente hacia adelante. Tirá la barra hasta el mentón llevando los codos hacia abajo y atrás. Volvé lento. Construye el V-taper.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=wide+grip+lat+pulldown+back+V+taper&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Face Pull con polea</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">15 reps</span><span class="tag tag-gray">Descanso 60"</span><span class="tag tag-red">Nunca saltear</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Polea alta con cuerda. Tirá hacia la cara separando los extremos, codos a 90°. Fundamental para el manguito rotador y la postura en pádel.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=face+pull+cable+rope+rear+delt+rotator+cuff&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Curl bíceps con barra</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">10 reps</span><span class="tag tag-gray">Descanso 60"</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">De pie, agarre supino al ancho de hombros. Sin balanceo de torso. Subí hasta que el antebrazo quede vertical. Supinación completa arriba. Bajá lento en 2–3 segundos.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=barbell+curl+bicep+standing+form&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Extensión tríceps en cuerda</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">12 reps</span><span class="tag tag-gray">Descanso 60"</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Polea alta. Codos fijos al cuerpo. Empujá hacia abajo separando la cuerda. Extensión completa abajo.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=tricep+rope+pushdown+cable+form&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+  </div>
+
+  <div id="jue-pierna" class="block-panel">
+    <p style="font-size:12px;color:#e8223a;font-weight:700;padding:0 2px 10px;">🦵 Día de cadena posterior. Todos empiezan por la pierna derecha. Bajada en 3–4 segundos obligatorio.</p>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Curl femoral en máquina — acostado</div>
+      <div class="ex-tags"><span class="tag tag-gray">4 series</span><span class="tag tag-gray">10 reps</span><span class="tag tag-red">Bajada 4 seg · PRIORIDAD DEL DÍA</span><span class="tag tag-gray">Descanso 90"</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Acostado boca abajo, tobillo bajo el rodillo. Flexioná llevando talones al glúteo. Apretá el isquio 1 segundo arriba. Bajá en 4 segundos — esta fase excéntrica es la que fortalece el isquio como freno activo de la tibia. Es el ejercicio más importante de este bloque.</div>
+      <div class="ex-tip">⚠️ Bajada en 4 segundos no es opcional. Sin tempo excéntrico el curl femoral es solo un ejercicio de volumen. Con tempo es protección activa del LCA.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=lying+leg+curl+machine+hamstring+eccentric+4+seconds&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Nordic Hamstring</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">6 reps</span><span class="tag tag-red">Bajada lo más lenta posible</span><span class="tag tag-gray">Descanso 2'</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">De rodillas en el suelo, talones fijos — un compañero los sujeta, o los metés bajo la barra de la máquina de curl femoral al revés, o bajo cualquier barra fija. Brazos a los costados o cruzados. Desde posición erguida, bajate hacia adelante lo más lento posible frenando con los isquiotibiales. Cuando no puedas sostener más, apoyá las manos y volvé empujando con ellas.</div>
+      <div class="ex-tip">💡 Evidencia: reduce hasta 51% el riesgo de desgarro de isquiotibiales en fútbol. Es excéntrico puro — el músculo trabaja mientras se alarga. Las primeras semanas bajás muy poco antes de caer — eso es normal, progresá gradualmente.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=nordic+hamstring+curl+eccentric+football+ACL+prevention&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Peso muerto unipodal — derecha primero</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">10 reps c/pierna</span><span class="tag tag-red">Der. primero · Bajada 3 seg</span><span class="tag tag-gray">Descanso 90"</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Parado en pie derecho, una mancuerna en la mano opuesta. Inclinación del torso hacia adelante mientras la pierna libre sube atrás, manteniendo cadera cuadrada y espalda plana. Bajada en 3 segundos. Cadena posterior completa — isquio, glúteo y lumbar trabajando juntos.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=single+leg+romanian+deadlift+dumbbell+balance+hamstring&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Elevación de gemelo unipodal — derecha primero</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">15 reps c/pierna</span><span class="tag tag-red">Der. primero</span><span class="tag tag-gray">Descanso 60"</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Parado en el borde de un escalón en un pie. Bajá el talón hasta el máximo estiramiento posible del gemelo. Subí hasta la punta del pie. Rango completo en ambas direcciones. Podés sujetarte de algo para el equilibrio pero no para ayudarte a subir.</div>
+      <div class="ex-tip">💡 Fortalece la cadena distal bilateral. Protege directamente el tibial izquierdo sobrecargado por la compensación post-LCA.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=single+leg+calf+raise+eccentric+step+edge&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Abducción en polea de pie — derecha primero</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">15 reps c/pierna</span><span class="tag tag-green">Glúteo medio</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Polea baja en tobillo. Parado en el pie opuesto, llevá la pierna con la polea hacia afuera lateralmente. Volvé lento controlando la resistencia. Activa directamente el glúteo medio. Empezá por la derecha.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=cable+hip+abduction+standing+glute+medius+machine&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+  </div>
+
+  <div id="jue-cardio" class="block-panel">
+    <div class="cardio-card">
+      <div class="cardio-title">🫀 Sprint Anaeróbico — Protocolo 20"/100" — 8 rondas</div>
+      <div class="cardio-protocol">
+        <p><strong>Protocolo:</strong> 20 segundos de sprint máximo → 100 segundos caminando → repetir 8 veces</p>
+        <p><strong>Intensidad sprint:</strong> 100% — velocidad máxima absoluta</p>
+        <p><strong>Intensidad pausa:</strong> Caminata — recuperación completa</p>
+        <p><strong>Lugar:</strong> Pista del gimnasio</p>
+        <p><strong>Duración total:</strong> ~20 minutos</p>
+      </div>
+      <div class="cardio-why">La pausa larga de 100 segundos garantiza que cada sprint sea de máxima calidad. El objetivo no es cansarse — es que cada uno de los 8 sprints sea al 100%. Esto recupera la velocidad de arranque, el pique y la potencia anaeróbica específica del fútbol. Calidad sobre cantidad.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ VIERNES ════════ -->
+<div id="vie" class="day-panel">
+  <div class="block-tabs">
+    <div class="block-tab active" onclick="showBlock('vie','vie-core')">🧱 Core</div>
+    <div class="block-tab" onclick="showBlock('vie','vie-pro')">🧠 Propiocepción</div>
+    <div class="block-tab" onclick="showBlock('vie','vie-plio')">⚡ Pliometría</div>
+    <div class="block-tab" onclick="showBlock('vie','vie-fuerza')">💪 Calistenia</div>
+    <div class="block-tab" onclick="showBlock('vie','vie-pierna')">🦵 Pierna</div>
+    <div class="block-tab" onclick="showBlock('vie','vie-cardio')">🫀 HIIT</div>
+  </div>
+
+  <div id="vie-core" class="block-panel active">
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Elevación de piernas en barra</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 vueltas</span><span class="tag tag-gray">15 reps</span><span class="tag tag-blue">Circuito</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Sin balanceo. Tensión abdominal constante. Bajada controlada.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=hanging+leg+raise+abs+bar+exercise&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Abdominal declinado</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 vueltas</span><span class="tag tag-gray">15 reps</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Sin inercia. Subí con el abdomen. Bajá lento.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=decline+sit+up+abs&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">TRX Circles</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 vueltas</span><span class="tag tag-gray">10 reps c/lado</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Plancha con pies en TRX. Círculos lentos con las caderas. Cadera alineada siempre.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=TRX+hip+circles+plank+core+stability&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Plancha frontal</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 vueltas</span><span class="tag tag-gray">60 seg</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Cuerpo rígido. Glúteo apretado. No hundas la cadera.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=forearm+plank+core+form+straight+body&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+  </div>
+
+  <div id="vie-pro" class="block-panel">
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Salto y freno unipodal — derecha primero</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">6 reps</span><span class="tag tag-red">Pie derecho · Progresión por fases</span><span class="tag tag-gray">Descanso 60"</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Saltá hacia adelante y aterrizá en pie derecho frenando completamente. Aguantá 2 segundos inmóvil antes de volver. Fase A: salto corto. Fase B: salto normal. Fase C: salto largo encadenado. La distancia aumenta a medida que la confianza crece — no antes.</div>
+      <div class="ex-tip">💡 Este ejercicio es el termómetro del progreso. Cuando podés hacerlo en pie derecho con la misma confianza que en el izquierdo, estás listo para volver al fútbol a full.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=single+leg+hop+stick+landing+ACL+return+sport&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Equilibrio BOSU + recepción de pelota — pie derecho</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">10 recepciones</span><span class="tag tag-red">Pie derecho</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Parado en pie derecho sobre el BOSU. Lanzá una pelota contra la pared y recibila. El cuerpo reacciona automáticamente sin tiempo de preparación. Es el ejercicio más específico para el retorno al fútbol — la rodilla aprende a estabilizarse en condiciones reactivas imprevisibles.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=BOSU+single+leg+balance+ball+toss+reactive+proprioception&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Monster Walk + salto lateral con aterrizaje</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">10 reps c/lado</span><span class="tag tag-green">Glúteo medio</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Banda en tobillos. En vez de pasos laterales normales, hacé pequeños saltos laterales aterrizando en un pie y aguantando 1 segundo. Combina activación del glúteo medio con propiocepción dinámica de aterrizaje.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=lateral+hop+band+glute+medius+single+leg+landing&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+  </div>
+
+  <div id="vie-plio" class="block-panel">
+    <p style="font-size:12px;color:#888;padding:0 2px 12px;line-height:1.5;">Viernes es el día de <strong>máxima potencia pliométrica</strong>. Llegás acá después de 4 días de trabajo acumulado. El sistema nervioso está entrenado para esto.</p>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Box Jump altura completa</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">5 reps</span><span class="tag tag-red">Máxima explosión</span><span class="tag tag-gray">Descanso 90"</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Cajón a altura completa. Máxima explosión en el salto. Aterrizá suave y silencioso absorbiendo con rodillas y caderas. Bajá caminando. El foco ahora es la potencia de despegue, no el control del aterrizaje — ya lo trabajaste el lunes y el miércoles.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=box+jump+full+height+explosive+power+plyometric&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Bounds — saltos amplios alternados</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">20 metros</span><span class="tag tag-gray">Descanso 90"</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Saltos amplios alternando piernas como una carrera exagerada en cámara lenta. Cada salto busca máxima distancia horizontal. Aterrizás en un pie y de ahí explotás hacia el siguiente. Transferencia directa a la zancada y velocidad de sprint.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=bounding+plyometric+alternating+legs+horizontal+power+speed&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Salto unipodal encadenado — derecha primero</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">3 saltos seguidos c/pierna</span><span class="tag tag-red">Der. primero · Descanso 75"</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">3 saltos consecutivos hacia adelante en pie derecho sin pausa entre aterrizaje y siguiente salto. El rebote debe ser inmediato — tiempo de contacto mínimo con el suelo. Luego 3 saltos en pie izquierdo. Este es el ejercicio pliométrico más avanzado del programa.</div>
+      <div class="ex-tip">⚠️ Solo hacés esto cuando el salto y freno unipodal del bloque de propiocepción se hace sin hesitación. Si hay duda, volvé a Fase B.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=single+leg+consecutive+hops+reactive+plyometric+ACL+power&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+  </div>
+
+  <div id="vie-fuerza" class="block-panel">
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Dominadas agarre abierto — explosivas</div>
+      <div class="ex-tags"><span class="tag tag-gray">4 series</span><span class="tag tag-gray">8 reps</span><span class="tag tag-red">Subida explosiva</span><span class="tag tag-gray">Descanso 2'</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Igual que las dominadas normales pero con intención explosiva en la subida — buscás que el pecho llegue a la barra con velocidad. El viernes se entrena potencia del tren superior, no solo fuerza. Bajada lenta en 2–3 segundos.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=explosive+pull+up+power+chest+to+bar+back&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Dominadas explosivas — pecho a la barra</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">5 reps</span><span class="tag tag-gray">Descanso 2'</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Subida con la máxima potencia posible intentando llevar el pecho a la barra. Si no llegás al pecho, intentá pasar el mentón y seguir trabajando hacia esa meta. Es el ejercicio de potencia de tracción máxima.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=explosive+chest+to+bar+pull+up+power+calisthenics&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Fondos en paralelas</div>
+      <div class="ex-tags"><span class="tag tag-gray">4 series</span><span class="tag tag-gray">10 reps</span><span class="tag tag-red">Bajada 2 seg · Subida explosiva</span><span class="tag tag-gray">Descanso 90"</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Bajada controlada en 2 segundos, subida explosiva. La combinación de excéntrico controlado + concéntrico explosivo es lo que desarrolla potencia real de empuje.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=dips+parallel+bars+explosive+concentric+power&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Flexiones explosivas</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">8–10 reps</span><span class="tag tag-gray">Descanso 90"</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Flexión normal hasta abajo, subida con máxima explosión. Si podés, con palmada. Si no, explosivas sin despegar las manos. El objetivo es que el empuje sea tan potente que el cuerpo se eleve.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=explosive+clap+push+up+plyometric+chest+power&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Farmer Carry</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">30 metros</span><span class="tag tag-red">Carga máxima</span><span class="tag tag-gray">Descanso 90"</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Carga máxima manteniendo postura erguida. Cierra el bloque de fuerza del viernes. El más pesado de la semana.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=farmer+carry+heavy+max+load+strongman+core&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+  </div>
+
+  <div id="vie-pierna" class="block-panel">
+    <p style="font-size:12px;color:#e8223a;font-weight:700;padding:0 2px 10px;">🦵 Viernes es el día de potencia máxima de pierna. Todos empiezan por la derecha.</p>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Hip Thrust unipodal — explosivo</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">12 reps c/pierna</span><span class="tag tag-red">Der. primero · Explosivo arriba · Bajada 3 seg</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Igual que el lunes pero con subida explosiva — buscás potencia en la extensión de cadera. Bajada lenta en 3 segundos. Combina potencia concéntrica con fuerza excéntrica.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=single+leg+hip+thrust+explosive+power+glute&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Step Down Anterior</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">10 reps c/pierna</span><span class="tag tag-red">Der. primero · Bajada 4 seg</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">El más importante del viernes para el LCA. Bajada en 4 segundos obligatorio. Rodilla alineada sin valgo. El cierre de la semana de trabajo excéntrico de cuádriceps.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=step+down+anterior+eccentric+quad+ACL+control+single+leg&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Peso muerto unipodal — derecha primero</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">10 reps c/pierna</span><span class="tag tag-red">Der. primero · Bajada 3 seg</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Espalda plana, cadera cuadrada. Control de equilibrio. Cadena posterior completa. Pierna derecha primero siempre.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=single+leg+deadlift+dumbbell+balance+eccentric&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+    <div class="ex-card"><div class="ex-card-top">
+      <div class="ex-name">Plancha lateral con elevación de pierna (aductores)</div>
+      <div class="ex-tags"><span class="tag tag-gray">3 series</span><span class="tag tag-gray">12 reps c/lado</span><span class="tag tag-green">Aductores + Glúteo medio</span></div>
+      <div class="ex-how">¿Cómo se hace?</div>
+      <div class="ex-desc">Plancha lateral en antebrazo. Levantá la pierna superior en abducción. La pierna inferior activa el aductor para sostener la posición. La superior activa el abductor al elevarse. Estabilidad lateral completa de cadera.</div>
+      <button class="img-btn" onclick="window.open('https://www.google.com/search?q=side+plank+leg+raise+abductor+adductor+hip+stability&tbm=isch','_blank')">🔍 Ver imagen</button>
+    </div></div>
+  </div>
+
+  <div id="vie-cardio" class="block-panel">
+    <div class="cardio-card">
+      <div class="cardio-title">🫀 HIIT — Protocolo 30"/30" — 12 rondas</div>
+      <div class="cardio-protocol">
+        <p><strong>Protocolo:</strong> 30 segundos al máximo → 30 segundos caminando → repetir 12 veces</p>
+        <p><strong>Intensidad trabajo:</strong> 100% — velocidad máxima absoluta</p>
+        <p><strong>Intensidad pausa:</strong> Caminata — no trote</p>
+        <p><strong>Lugar:</strong> Pista del gimnasio</p>
+        <p><strong>Duración total:</strong> 12 minutos de intervalos + 6 minutos de calentamiento y enfriamiento = ~20 minutos</p>
+      </div>
+      <div class="cardio-why">El cierre más exigente de la semana. Los 30 segundos son suficientemente largos para simular los esfuerzos de alta intensidad del fútbol y los puntos largos del pádel. La pausa corta de 30 segundos reentrena la recuperación rápida entre esfuerzos — exactamente lo que perdiste durante el año sin jugar.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showDay(day) {
+  document.querySelectorAll('.day-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(day).classList.add('active');
+  const days = ['lun','mar','mie','jue','vie'];
+  document.querySelectorAll('.day-tab')[days.indexOf(day)].classList.add('active');
+}
+
+function showBlock(day, blockId) {
+  const panel = document.getElementById(day);
+  panel.querySelectorAll('.block-panel').forEach(p => p.classList.remove('active'));
+  panel.querySelectorAll('.block-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(blockId).classList.add('active');
+  const clickedTab = event.target;
+  clickedTab.classList.add('active');
+}
+</script>
+
+<div id="resumen" class="day-panel">
+<div style="padding:12px;">
+<p style="font-size:12px;color:#888;margin-bottom:14px;line-height:1.5;">Vista rápida de todos los dias. Toca un dia arriba para ver el detalle completo con descripciones.</p>
+
+<div class="resumen-day"><div class="resumen-day-header"><div class="resumen-day-name">LUNES</div><span class="resumen-day-type type-cali">Calistenia + Cardio Z2</span></div>
+<div class="resumen-block"><div class="resumen-block-title">Core 12 min</div>
+<div class="resumen-ex">Elevacion de piernas en barra<span>3v x 15 reps</span></div>
+<div class="resumen-ex">Abdominal declinado<span>3v x 15 reps</span></div>
+<div class="resumen-ex">Plancha frontal<span>3v x 60 seg</span></div>
+<div class="resumen-ex">Pallof Press con polea<span>3v x 12 c/lado</span></div></div>
+<div class="resumen-block"><div class="resumen-block-title">Propiocepcion + Gluteo medio 8 min</div>
+<div class="resumen-ex">Sentadilla isometrica en pared<span>3x45seg pie der.</span></div>
+<div class="resumen-ex">Step Down Anterior<span>3x10 bajada 4seg der.</span></div>
+<div class="resumen-ex">Monster Walk con banda<span>3x15 pasos</span></div></div>
+<div class="resumen-block"><div class="resumen-block-title">Pliometria 12 min</div>
+<div class="resumen-ex">Box Jump<span>3x5</span></div>
+<div class="resumen-ex">Skater Jump corto<span>3x6 c/lado</span></div></div>
+<div class="resumen-block"><div class="resumen-block-title">Calistenia 50 min</div>
+<div class="resumen-ex">Dominadas agarre abierto<span>4x8-10</span></div>
+<div class="resumen-ex">Dominadas agarre cerrado<span>4x8-10</span></div>
+<div class="resumen-ex">Fondos en paralelas<span>4x10-12</span></div>
+<div class="resumen-ex">Remo en TRX<span>3x12</span></div>
+<div class="resumen-ex">Farmer Carry<span>3x30m</span></div></div>
+<div class="resumen-block"><div class="resumen-block-title">Pierna 20 min</div>
+<div class="resumen-ex">Hip Thrust bilateral barra<span>4x10 pesado bajada 3seg</span></div>
+<div class="resumen-ex">Hip Thrust unipodal<span>3x12 c/pierna der.</span></div>
+<div class="resumen-ex">Zancada cruzada / Curtsy Lunge<span>3x10 c/pierna bajada 3seg</span></div></div>
+<div class="resumen-block"><div class="resumen-block-title">Cardio Zona 2 18 min</div>
+<div class="resumen-ex">Trote continuo o bici<span>65-70% FC</span></div></div></div>
+
+<div class="resumen-day"><div class="resumen-day-header"><div class="resumen-day-name">MARTES</div><span class="resumen-day-type type-pesas">Pesas + VO2 Max</span></div>
+<div class="resumen-block"><div class="resumen-block-title">Core 12 min</div>
+<div class="resumen-ex">Elevacion de piernas en barra<span>3v x 15</span></div>
+<div class="resumen-ex">Abdominal declinado<span>3v x 15</span></div>
+<div class="resumen-ex">Plancha frontal<span>3v x 60 seg</span></div>
+<div class="resumen-ex">Wood Chopper con cable<span>3v x 12 c/lado</span></div></div>
+<div class="resumen-block"><div class="resumen-block-title">Propiocepcion + Gluteo medio 8 min</div>
+<div class="resumen-ex">Star Excursion Balance Test<span>3x6 dir. pie der.</span></div>
+<div class="resumen-ex">Equilibrio en BOSU<span>3x40seg pie der.</span></div>
+<div class="resumen-ex">Clamshell con banda<span>3x15 c/lado</span></div></div>
+<div class="resumen-block"><div class="resumen-block-title">Pesas 50 min</div>
+<div class="resumen-ex">Press inclinado mancuernas<span>4x10</span></div>
+<div class="resumen-ex">Press plano mancuernas<span>3x10</span></div>
+<div class="resumen-ex">Press militar mancuernas<span>3x10</span></div>
+<div class="resumen-ex">Remo con mancuerna<span>3x10 c/lado</span></div>
+<div class="resumen-ex">Face Pull con polea<span>3x15</span></div>
+<div class="resumen-ex">Curl martillo<span>3x10</span></div>
+<div class="resumen-ex">Extension triceps en cuerda<span>3x12</span></div></div>
+<div class="resumen-block"><div class="resumen-block-title">Pierna 20 min</div>
+<div class="resumen-ex">Sentadilla bulgara<span>4x10 bajada 4seg der.</span></div>
+<div class="resumen-ex">Peso muerto convencional<span>4x6 pesado bajada 3seg</span></div>
+<div class="resumen-ex">Curl femoral maquina<span>4x10 bajada 4seg OBLIGATORIO</span></div>
+<div class="resumen-ex">Isquiotibiales en roller<span>3x8 lento</span></div>
+<div class="resumen-ex">Side Step con banda<span>3x15 pasos</span></div></div>
+<div class="resumen-block"><div class="resumen-block-title">VO2 Max 18 min</div>
+<div class="resumen-ex">Intervalos 2'/2'<span>5 rondas 85-90% FC</span></div></div></div>
+
+<div class="resumen-day"><div class="resumen-day-header"><div class="resumen-day-name">MIERCOLES</div><span class="resumen-day-type type-cali">Calistenia + Cardio Z2</span></div>
+<div class="resumen-block"><div class="resumen-block-title">Core 12 min</div>
+<div class="resumen-ex">Elevacion de piernas en barra<span>3v x 15</span></div>
+<div class="resumen-ex">Abdominal declinado<span>3v x 15</span></div>
+<div class="resumen-ex">TRX Circles<span>3v x 10 c/lado</span></div>
+<div class="resumen-ex">Plancha lateral con elevacion de cadera<span>3v x 12 c/lado</span></div></div>
+<div class="resumen-block"><div class="resumen-block-title">Propiocepcion + Gluteo medio 8 min</div>
+<div class="resumen-ex">Peso muerto unipodal ojos cerrados<span>3x8 pie der.</span></div>
+<div class="resumen-ex">Depth Drop bilateral<span>3x5 frenada completa</span></div>
+<div class="resumen-ex">Clamshell con banda<span>3x15 c/lado</span></div></div>
+<div class="resumen-block"><div class="resumen-block-title">Pliometria 12 min</div>
+<div class="resumen-ex">Saltos laterales bilaterales<span>3x8 c/lado</span></div>
+<div class="resumen-ex">Bulgarian Jump Squat<span>3x5 c/pierna der.</span></div></div>
+<div class="resumen-block"><div class="resumen-block-title">Calistenia 50 min</div>
+<div class="resumen-ex">Dominadas agarre abierto<span>4x8-10</span></div>
+<div class="resumen-ex">Fondos en paralelas<span>4x10-12</span></div>
+<div class="resumen-ex">Flexiones en TRX<span>3x12</span></div>
+<div class="resumen-ex">Remo en TRX<span>3x12</span></div>
+<div class="resumen-ex">Farmer Carry<span>3x30m</span></div></div>
+<div class="resumen-block"><div class="resumen-block-title">Pierna 20 min</div>
+<div class="resumen-ex">Leg Curl en TRX<span>3x10 bajada 3seg</span></div>
+<div class="resumen-ex">Step Up explosivo<span>3x8 c/pierna bajada 3seg der.</span></div>
+<div class="resumen-ex">Zancada bulgara<span>3x10 c/pierna bajada 4seg</span></div>
+<div class="resumen-ex">Monster Walk con banda<span>3x15 pasos</span></div></div>
+<div class="resumen-block"><div class="resumen-block-title">Cardio Zona 2 18 min</div>
+<div class="resumen-ex">Trote continuo o bici<span>65-70% FC</span></div></div></div>
+
+<div class="resumen-day"><div class="resumen-day-header"><div class="resumen-day-name">JUEVES</div><span class="resumen-day-type type-pesas">Pesas + Sprint</span></div>
+<div class="resumen-block"><div class="resumen-block-title">Core 12 min</div>
+<div class="resumen-ex">Elevacion de piernas en barra<span>3v x 15</span></div>
+<div class="resumen-ex">Abdominal declinado<span>3v x 15</span></div>
+<div class="resumen-ex">Plancha frontal<span>3v x 60 seg</span></div>
+<div class="resumen-ex">Rotaciones en TRX<span>3v x 10 c/lado</span></div></div>
+<div class="resumen-block"><div class="resumen-block-title">Propiocepcion + Gluteo medio 8 min</div>
+<div class="resumen-ex">Star Excursion en BOSU<span>3x6 dir. pie der.</span></div>
+<div class="resumen-ex">Recepcion de pelota en pie derecho<span>3x10</span></div>
+<div class="resumen-ex">Elevacion lateral de cadera en suelo<span>3x15 c/lado</span></div></div>
+<div class="resumen-block"><div class="resumen-block-title">Pesas 50 min</div>
+<div class="resumen-ex">Press inclinado mancuernas<span>4x10</span></div>
+<div class="resumen-ex">Elevaciones laterales<span>3x15</span></div>
+<div class="resumen-ex">Jalon al pecho agarre ancho<span>4x10</span></div>
+<div class="resumen-ex">Face Pull con polea<span>3x15</span></div>
+<div class="resumen-ex">Curl biceps con barra<span>3x10</span></div>
+<div class="resumen-ex">Extension triceps en cuerda<span>3x12</span></div></div>
+<div class="resumen-block"><div class="resumen-block-title">Pierna - Cadena posterior 20 min</div>
+<div class="resumen-ex">Curl femoral maquina<span>4x10 bajada 4seg PRIORIDAD</span></div>
+<div class="resumen-ex">Nordic Hamstring<span>3x6 bajada max lenta</span></div>
+<div class="resumen-ex">Peso muerto unipodal<span>3x10 bajada 3seg der.</span></div>
+<div class="resumen-ex">Elevacion gemelo unipodal<span>3x15 c/pierna der.</span></div>
+<div class="resumen-ex">Abduccion en polea de pie<span>3x15 c/pierna</span></div></div>
+<div class="resumen-block"><div class="resumen-block-title">Sprint Anaerobico 20 min</div>
+<div class="resumen-ex">Protocolo 20seg / 100seg<span>8 rondas 100% intensidad</span></div></div></div>
+
+<div class="resumen-day"><div class="resumen-day-header"><div class="resumen-day-name">VIERNES</div><span class="resumen-day-type type-cali">Calistenia Potencia + HIIT</span></div>
+<div class="resumen-block"><div class="resumen-block-title">Core 12 min</div>
+<div class="resumen-ex">Elevacion de piernas en barra<span>3v x 15</span></div>
+<div class="resumen-ex">Abdominal declinado<span>3v x 15</span></div>
+<div class="resumen-ex">TRX Circles<span>3v x 10 c/lado</span></div>
+<div class="resumen-ex">Plancha frontal<span>3v x 60 seg</span></div></div>
+<div class="resumen-block"><div class="resumen-block-title">Propiocepcion reactiva + Gluteo medio 8 min</div>
+<div class="resumen-ex">Salto y freno unipodal<span>3x6 pie der. progresion fases</span></div>
+<div class="resumen-ex">BOSU + recepcion de pelota<span>3x10 pie der.</span></div>
+<div class="resumen-ex">Monster Walk + salto lateral<span>3x10 c/lado</span></div></div>
+<div class="resumen-block"><div class="resumen-block-title">Pliometria maxima 12 min</div>
+<div class="resumen-ex">Box Jump altura completa<span>3x5 maxima explosion</span></div>
+<div class="resumen-ex">Bounds saltos amplios<span>3x20m</span></div>
+<div class="resumen-ex">Salto unipodal encadenado<span>3x3 saltos der.</span></div></div>
+<div class="resumen-block"><div class="resumen-block-title">Calistenia potencia 50 min</div>
+<div class="resumen-ex">Dominadas explosivas agarre abierto<span>4x8</span></div>
+<div class="resumen-ex">Dominadas pecho a la barra<span>3x5</span></div>
+<div class="resumen-ex">Fondos en paralelas explosivos<span>4x10</span></div>
+<div class="resumen-ex">Flexiones explosivas<span>3x8-10</span></div>
+<div class="resumen-ex">Farmer Carry<span>3x30m maximo peso</span></div></div>
+<div class="resumen-block"><div class="resumen-block-title">Pierna potencia maxima 20 min</div>
+<div class="resumen-ex">Hip Thrust unipodal explosivo<span>3x12 c/pierna bajada 3seg</span></div>
+<div class="resumen-ex">Step Down Anterior<span>3x10 c/pierna bajada 4seg</span></div>
+<div class="resumen-ex">Peso muerto unipodal<span>3x10 c/pierna bajada 3seg</span></div>
+<div class="resumen-ex">Plancha lateral elevacion de pierna<span>3x12 c/lado</span></div></div>
+<div class="resumen-block"><div class="resumen-block-title">HIIT 20 min</div>
+<div class="resumen-ex">Protocolo 30seg / 30seg<span>12 rondas 100% intensidad</span></div></div></div>
+
+</div>
+</div>
+
+<div id="buscar" class="day-panel">
+<div style="padding:12px;">
+<input type="text" class="search-input" id="searchInput" placeholder="Buscar... ej: core, isquio, gluteo, dominadas, LCA, sprint" oninput="doSearch()">
+<div class="search-tags">
+  <button class="search-tag" onclick="setSearch('core')">Core</button>
+  <button class="search-tag" onclick="setSearch('gluteo medio')">Gluteo medio</button>
+  <button class="search-tag" onclick="setSearch('isquio')">Isquiotibiales</button>
+  <button class="search-tag" onclick="setSearch('propiocepcion')">Propiocepcion</button>
+  <button class="search-tag" onclick="setSearch('LCA')">LCA</button>
+  <button class="search-tag" onclick="setSearch('dominadas')">Dominadas</button>
+  <button class="search-tag" onclick="setSearch('pliometria')">Pliometria</button>
+  <button class="search-tag" onclick="setSearch('sprint')">Sprint</button>
+  <button class="search-tag" onclick="setSearch('cardio')">Cardio</button>
+  <button class="search-tag" onclick="setSearch('unipodal')">Unipodal</button>
+  <button class="search-tag" onclick="setSearch('biceps')">Biceps</button>
+  <button class="search-tag" onclick="setSearch('hombro')">Hombro</button>
+  <button class="search-tag" onclick="setSearch('TRX')">TRX</button>
+  <button class="search-tag" onclick="setSearch('banda')">Banda elastica</button>
+  <button class="search-tag" onclick="setSearch('excentrico')">Excentrico</button>
+</div>
+<div id="searchResults"><p class="no-results">Busca un ejercicio o toca una etiqueta rapida</p></div>
+</div>
+</div>
+</body>
+</html>
