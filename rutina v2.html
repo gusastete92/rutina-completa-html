@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mi Rutina">
+<meta name="theme-color" content="#0a0a0a">
+<title>Mi Rutina</title>
+<style>
+:root {
+  --bg: #0a0a0a;
+  --card: #141414;
+  --card2: #1c1c1c;
+  --border: #2a2a2a;
+  --accent: #e8223a;
+  --accent2: #ff6b35;
+  --blue: #3b82f6;
+  --green: #22c55e;
+  --text: #f0f0f0;
+  --muted: #888;
+  --sub: #555;
+  --radius: 14px;
+  --timer-color: #e8223a;
+}
+.light {
+  --bg: #f0f0f0;
+  --card: #ffffff;
+  --card2: #f8f8f8;
+  --border: #e0e0e0;
+  --text: #111;
+  --muted: #666;
+  --sub: #aaa;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; }
+body { font-family: -apple-system, 'SF Pro Display', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 80px; transition: background 0.3s, color 0.3s; }
+
+/* ── HEADER ── */
+.app-header {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 16px 10px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.app-title { font-size: 17px; font-weight: 800; letter-spacing: -0.3px; }
+.app-title span { color: var(--accent); }
+.header-actions { display: flex; gap: 8px; align-items: center; }
+.icon-btn { background: var(--card2); border: none; border-radius: 10px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; color: var(--text); }
+
+/* ── BOTTOM NAV ── */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  display: flex;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.nav-item {
+  flex: 1; padding: 10px 4px 8px; display: flex; flex-direction: column;
+  align-items: center; gap: 3px; cursor: pointer; border: none; background: none; color: var(--sub);
+  font-size: 10px; font-weight: 600; transition: color 0.15s;
+}
+.nav-item.active { color: var(--accent); }
+.nav-icon { font-size: 20px; line-height: 1; }
+
+/* ── VIEWS ── */
+.view { display: none; }
+.view.active { display: block; }
+
+/* ── DAY SELECTOR ── */
+.day-scroll { display: flex; gap: 8px; padding: 12px 16px; overflow-x: auto; scrollbar-width: none; }
+.day-scroll::-webkit-scrollbar { display: none; }
+.day-chip {
+  flex-shrink: 0; padding: 8px 16px; border-radius: 20px;
+  border: 1.5px solid var(--border); background: var(--card);
+  color: var(--muted); font-size: 12px; font-weight: 700;
+  cursor: pointer; transition: all 0.15s;
+}
+.day-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.day-chip.done-day { border-color: var(--green); color: var(--green); }
+
+/* ── BLOCK PILLS ── */
+.block-scroll { display: flex; gap: 6px; padding: 0 16px 12px; overflow-x: auto; scrollbar-width: none; }
+.block-scroll::-webkit-scrollbar { display: none; }
+.block-pill {
+  flex-shrink: 0; padding: 6px 12px; border-radius: 20px;
+  border: 1px solid var(--border); background: transparent;
+  color: var(--muted); font-size: 11px; font-weight: 700;
+  cursor: pointer; transition: all 0.15s;
+}
+.block-pill.active { background: var(--card2); border-color: var(--text); color: var(--text); }
+
+/* ── PROGRESS BAR ── */
+.progress-wrap { padding: 0 16px 12px; }
+.progress-top { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 6px; font-weight: 600; }
+.progress-bg { background: var(--card2); border-radius: 10px; height: 5px; }
+.progress-fill { background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 10px; height: 5px; transition: width 0.4s ease; }
+
+/* ── EXERCISE CARD ── */
+.ex-list { padding: 0 16px; }
+.block-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); padding: 16px 0 8px; }
+
+.ex-card {
+  background: var(--card); border-radius: var(--radius);
+  margin-bottom: 10px; overflow: hidden;
+  border: 1px solid var(--border);
+  transition: opacity 0.3s, border-color 0.2s;
+}
+.ex-card.completed { opacity: 0.4; }
+.ex-card.completed .ex-check { background: var(--green); border-color: var(--green); }
+
+.ex-main { display: flex; align-items: center; gap: 12px; padding: 14px; }
+.ex-check {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 2px solid var(--border); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.2s; background: transparent;
+  font-size: 14px; color: transparent;
+}
+.ex-card.completed .ex-check { color: #fff; }
+.ex-info { flex: 1; min-width: 0; }
+.ex-name { font-size: 14px; font-weight: 700; margin-bottom: 5px; line-height: 1.3; }
+.ex-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.ex-tag { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 6px; background: var(--card2); color: var(--muted); }
+.ex-tag.red { background: rgba(232,34,58,0.12); color: var(--accent); }
+.ex-tag.green { background: rgba(34,197,94,0.12); color: var(--green); }
+.ex-tag.blue { background: rgba(59,130,246,0.12); color: var(--blue); }
+
+.ex-actions { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; flex-shrink: 0; }
+.action-btn {
+  border: none; border-radius: 8px; padding: 6px 10px;
+  font-size: 11px; font-weight: 700; cursor: pointer; white-space: nowrap;
+}
+.btn-img { background: var(--card2); color: var(--text); }
+.btn-timer { background: rgba(232,34,58,0.15); color: var(--accent); }
+.btn-info { background: var(--card2); color: var(--muted); }
+
+.ex-detail {
+  display: none; padding: 0 14px 14px;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+.ex-detail.open { display: block; }
+.ex-how { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin-bottom: 6px; }
+.ex-desc-text { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 8px; }
+.ex-tip-box { background: rgba(232,34,58,0.08); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 8px 10px; font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+/* ── TIMER MODAL ── */
+.timer-overlay {
+  display: none; position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+  align-items: center; justify-content: center; flex-direction: column;
+}
+.timer-overlay.open { display: flex; }
+.timer-circle {
+  width: 200px; height: 200px; border-radius: 50%;
+  border: 4px solid var(--card2);
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; margin-bottom: 24px; position: relative;
+}
+.timer-svg { position: absolute; inset: -4px; width: calc(100% + 8px); height: calc(100% + 8px); transform: rotate(-90deg); }
+.timer-circle-track { fill: none; stroke: var(--card2); stroke-width: 4; }
+.timer-circle-fill { fill: none; stroke: var(--accent); stroke-width: 4; stroke-linecap: round; transition: stroke-dashoffset 1s linear; }
+.timer-num { font-size: 52px; font-weight: 900; letter-spacing: -2px; line-height: 1; }
+.timer-label { font-size: 12px; color: var(--muted); font-weight: 600; margin-top: 4px; }
+.timer-ex-name { font-size: 14px; font-weight: 700; color: var(--muted); margin-bottom: 24px; text-align: center; padding: 0 20px; }
+.timer-btns { display: flex; gap: 12px; }
+.timer-btn {
+  padding: 14px 28px; border-radius: 14px; border: none;
+  font-size: 15px; font-weight: 700; cursor: pointer;
+}
+.timer-btn.primary { background: var(--accent); color: #fff; }
+.timer-btn.secondary { background: var(--card2); color: var(--text); }
+.timer-presets { display: flex; gap: 8px; margin-bottom: 20px; }
+.timer-preset {
+  padding: 8px 16px; border-radius: 20px; border: 1px solid var(--border);
+  background: var(--card); color: var(--muted); font-size: 12px;
+  font-weight: 700; cursor: pointer;
+}
+.timer-preset.sel { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* ── RESUMEN VIEW ── */
+.resumen-wrap { padding: 16px; }
+.res-day-card { background: var(--card); border-radius: var(--radius); margin-bottom: 12px; overflow: hidden; border: 1px solid var(--border); }
+.res-day-head { padding: 12px 14px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.res-day-name { font-size: 15px; font-weight: 800; }
+.res-badge { font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+.badge-cali { background: rgba(232,34,58,0.12); color: var(--accent); }
+.badge-pesas { background: rgba(59,130,246,0.12); color: var(--blue); }
+.res-block { padding: 10px 14px; border-bottom: 1px solid var(--border); }
+.res-block:last-child { border-bottom: none; }
+.res-block-title { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 6px; }
+.res-ex { display: flex; justify-content: space-between; font-size: 12px; color: var(--text); padding: 3px 0; }
+.res-ex span { color: var(--muted); font-size: 11px; }
+
+/* ── SEARCH VIEW ── */
+.search-wrap { padding: 16px; }
+.search-bar {
+  width: 100%; padding: 14px 16px; border: 2px solid var(--border);
+  border-radius: var(--radius); background: var(--card); color: var(--text);
+  font-size: 15px; outline: none; margin-bottom: 12px;
+}
+.search-bar:focus { border-color: var(--accent); }
+.search-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.s-tag {
+  font-size: 11px; font-weight: 700; padding: 6px 12px;
+  border-radius: 20px; background: var(--card); color: var(--muted);
+  border: 1px solid var(--border); cursor: pointer;
+}
+.s-tag:active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.sr-card { background: var(--card); border-radius: var(--radius); margin-bottom: 10px; overflow: hidden; border: 1px solid var(--border); }
+.sr-head { padding: 8px 14px; background: var(--card2); }
+.sr-day { font-size: 10px; font-weight: 800; text-transform: uppercase; color: var(--accent); }
+.sr-block { font-size: 10px; color: var(--muted); }
+.sr-body { padding: 12px 14px; }
+.sr-name { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.sr-detail { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+.sr-desc { font-size: 12px; color: var(--muted); line-height: 1.5; margin-bottom: 8px; }
+.no-results { text-align: center; color: var(--muted); font-size: 13px; padding: 40px 20px; }
+
+/* ── CARDIO CARD ── */
+.cardio-card { background: var(--card); border-radius: var(--radius); margin-bottom: 10px; padding: 16px; border: 1px solid var(--border); }
+.cardio-title { font-size: 15px; font-weight: 800; margin-bottom: 10px; }
+.cardio-protocol { background: var(--card2); border-radius: 10px; padding: 12px; margin-bottom: 10px; }
+.cardio-protocol p { font-size: 12px; color: var(--muted); line-height: 1.8; }
+.cardio-why { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+/* ── CONFETTI / COMPLETION ── */
+@keyframes pop { 0%{transform:scale(0.8);opacity:0} 60%{transform:scale(1.1)} 100%{transform:scale(1);opacity:1} }
+.day-complete-banner {
+  background: linear-gradient(135deg, #22c55e22, #22c55e11);
+  border: 1px solid #22c55e44; border-radius: var(--radius);
+  padding: 14px 16px; margin: 0 16px 12px;
+  display: none; animation: pop 0.3s ease;
+  text-align: center; font-size: 14px; font-weight: 700; color: var(--green);
+}
+.day-complete-banner.show { display: block; }
+
+/* ── UTIL ── */
+.img-btn { background: var(--card2); color: var(--text); border: none; border-radius: 8px; padding: 7px 12px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<!-- TIMER OVERLAY -->
+<div class="timer-overlay" id="timerOverlay">
+  <div class="timer-ex-name" id="timerExName">Descanso</div>
+  <div class="timer-presets">
+    <div class="timer-preset sel" onclick="setPreset(60)">1 min</div>
+    <div class="timer-preset" onclick="setPreset(90)">90 seg</div>
+    <div class="timer-preset" onclick="setPreset(120)">2 min</div>
+    <div class="timer-preset" onclick="setPreset(150)">2:30</div>
+  </div>
+  <div class="timer-circle">
+    <svg class="timer-svg" viewBox="0 0 216 216">
+      <circle class="timer-circle-track" cx="108" cy="108" r="100"/>
+      <circle class="timer-circle-fill" id="timerArc" cx="108" cy="108" r="100" stroke-dasharray="628" stroke-dashoffset="0"/>
+    </svg>
+    <div class="timer-num" id="timerNum">1:00</div>
+    <div class="timer-label" id="timerLabel">DESCANSO</div>
+  </div>
+  <div class="timer-btns">
+    <button class="timer-btn secondary" onclick="closeTimer()">✕ Cerrar</button>
+    <button class="timer-btn primary" id="timerToggleBtn" onclick="toggleTimer()">▶ Iniciar</button>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="app-header">
+  <div class="app-title">Mi <span>Rutina</span></div>
+  <div class="header-actions">
+    <button class="icon-btn" onclick="toggleTheme()" id="themeBtn" title="Modo claro/oscuro">☀️</button>
+    <button class="icon-btn" onclick="openTimer(60,'Descanso libre')" title="Timer">⏱</button>
+  </div>
+</div>
+
+<!-- ════════ VIEW: ENTRENAR ════════ -->
+<div class="view active" id="view-train">
+  <div class="day-scroll" id="dayChips"></div>
+  <div class="progress-wrap">
+    <div class="progress-top">
+      <span id="progressLabel">Progreso del día</span>
+      <span id="progressCount">0 / 0</span>
+    </div>
+    <div class="progress-bg"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  </div>
+  <div class="day-complete-banner" id="completeBanner">🎉 ¡Día completado! Gran trabajo.</div>
+  <div class="block-scroll" id="blockPills"></div>
+  <div class="ex-list" id="exList"></div>
+</div>
+
+<!-- ════════ VIEW: RESUMEN ════════ -->
+<div class="view" id="view-resumen">
+  <div class="resumen-wrap" id="resumenContent"></div>
+</div>
+
+<!-- ════════ VIEW: BUSCAR ════════ -->
+<div class="view" id="view-buscar">
+  <div class="search-wrap">
+    <input type="search" class="search-bar" id="searchBar" placeholder="Buscar ejercicio... ej: isquio, gluteo, LCA" oninput="doSearch()">
+    <div class="search-tags">
+      <div class="s-tag" onclick="qs('core')">Core</div>
+      <div class="s-tag" onclick="qs('gluteo medio')">Glúteo medio</div>
+      <div class="s-tag" onclick="qs('isquio')">Isquiotibiales</div>
+      <div class="s-tag" onclick="qs('LCA')">LCA</div>
+      <div class="s-tag" onclick="qs('propiocepcion')">Propiocepción</div>
+      <div class="s-tag" onclick="qs('dominadas')">Dominadas</div>
+      <div class="s-tag" onclick="qs('pliometria')">Pliometría</div>
+      <div class="s-tag" onclick="qs('sprint')">Sprint</div>
+      <div class="s-tag" onclick="qs('TRX')">TRX</div>
+      <div class="s-tag" onclick="qs('unipodal')">Unipodal</div>
+      <div class="s-tag" onclick="qs('excentrico')">Excéntrico</div>
+      <div class="s-tag" onclick="qs('cardio')">Cardio</div>
+      <div class="s-tag" onclick="qs('hombro')">Hombro</div>
+      <div class="s-tag" onclick="qs('biceps')">Bíceps</div>
+    </div>
+    <div id="searchResults"><p class="no-results">Buscá un ejercicio o tocá una etiqueta</p></div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-item active" onclick="showView('train')" id="nav-train">
+    <span class="nav-icon">💪</span>Entrenar
+  </button>
+  <button class="nav-item" onclick="showView('resumen')" id="nav-resumen">
+    <span class="nav-icon">📋</span>Resumen
+  </button>
+  <button class="nav-item" onclick="showView('buscar')" id="nav-buscar">
+    <span class="nav-icon">🔍</span>Buscar
+  </button>
+</nav>
+
+<script>
+// ════════════════════════════════
+// DATA
+// ════════════════════════════════
+const DAYS = [
+  {
+    id:'lun', label:'LUNES', type:'cali', typeLabel:'Calistenia + Z2',
+    blocks:[
+      {id:'core', label:'🧱 Core', exercises:[
+        {id:'l-c1', name:'Elevación de piernas en barra', tags:['3v × 15','core'], tagStyle:['',''], restSec:0, muscle:'Core / Flexores cadera', desc:'Colgado de la barra, subí las piernas juntas a 90° sin balanceo. Bajá lento con control abdominal todo el tiempo.', tip:'Sin balanceo. Si balanceás, pausá y volvé a empezar.', img:'hanging+leg+raise+abs+bar'},
+        {id:'l-c2', name:'Abdominal declinado', tags:['3v × 15','abdomen'], restSec:0, muscle:'Recto abdominal', desc:'En banco declinado. Subí con el abdomen, no con inercia. Sin jalar del cuello. Bajá lento.', tip:'No jalés el cuello. El movimiento lo genera el abdomen.', img:'decline+sit+up+abdominal'},
+        {id:'l-c3', name:'Plancha frontal', tags:['3v × 60 seg','core'], restSec:60, muscle:'Core completo / Glúteo', desc:'Antebrazos y puntas de pie. Cuerpo rígido, glúteo apretado, cadera en línea. Respirá profundo.', tip:'Si la cadera cae o sube, bajá a 40 seg y progresá.', img:'forearm+plank+core+form'},
+        {id:'l-c4', name:'Pallof Press con polea', tags:['3v × 12 c/lado','anti-rotación'], restSec:0, muscle:'Core anti-rotación / Oblicuos', desc:'De lado a la polea. Empujá al frente con brazos extendidos y resistí la rotación. El core trabaja para que el cuerpo no gire.', tip:'Cuanto más lejos de la polea, más difícil. Empezá cerca.', img:'pallof+press+cable+anti+rotation+core'},
+      ]},
+      {id:'propio', label:'🧠 Propiocepción', exercises:[
+        {id:'l-p1', name:'Sentadilla isométrica en pared', tags:['3 × 45 seg','pie derecho'], tagStyle:['','red'], restSec:45, muscle:'Cuádriceps derecho / LCA', desc:'Espalda en pared, rodillas a 90°, pie derecho ligeramente adelante. El cuádriceps aprende a sostener carga sin reflejo de protección.', tip:'Es propiocepción, no fuerza. El objetivo es que el cerebro confíe en la pierna derecha.', img:'wall+sit+isometric+quad+ACL+rehab'},
+        {id:'l-p2', name:'Step Down Anterior', tags:['3 × 10','bajada 4 seg','der. primero'], tagStyle:['','red','red'], restSec:60, muscle:'Cuádriceps / LCA / Control excéntrico', desc:'Parado en pie derecho en el borde de un cajón. Bajá el pie izquierdo en 4 segundos sin apoyarlo. Volvé. Reentrena el control excéntrico del cuádriceps.', tip:'Hacé este ejercicio frente al espejo las primeras semanas. La rodilla NO debe colapsar hacia adentro.', img:'step+down+anterior+ACL+eccentric+quad'},
+        {id:'l-p3', name:'Monster Walk con banda', tags:['3 × 15 pasos','glúteo medio'], tagStyle:['','green'], restSec:60, muscle:'Glúteo medio / Abductores', desc:'Banda en tobillos. Semisquadilla, pasos laterales amplios manteniendo tensión en la banda. 15 pasos a la derecha, 15 a la izquierda.', tip:'El glúteo medio débil = rodilla que colapsa. Este ejercicio lo corrige directamente.', img:'monster+walk+resistance+band+glute+medius'},
+      ]},
+      {id:'plio', label:'⚡ Pliometría', exercises:[
+        {id:'l-pl1', name:'Box Jump bilateral', tags:['3 × 5','descanso 90"'], tagStyle:['',''], restSec:90, muscle:'Cuádriceps / Glúteo / Potencia', desc:'Máxima explosión al cajón. Aterrizá silencioso con rodillas flexionadas absorbiendo el impacto. Bajá caminando — nunca saltando.', tip:'Si hacés ruido al aterrizar, el impacto lo absorbe la articulación, no el músculo.', img:'box+jump+soft+landing+plyometric+ACL'},
+        {id:'l-pl2', name:'Skater Jump corto', tags:['3 × 6 c/lado','aguantar 2 seg'], tagStyle:['','red'], restSec:60, muscle:'Glúteo medio / Agilidad lateral / LCA', desc:'Saltá lateralmente aterrizando en un pie. Aguantá 2 segundos inmóvil antes de volver. El salto es corto — importa el control del aterrizaje.', tip:'La pausa de 2 seg es obligatoria. Le da tiempo al cerebro a registrar que la rodilla está estable.', img:'skater+jump+lateral+ACL+single+leg+landing'},
+      ]},
+      {id:'cali', label:'💪 Calistenia', exercises:[
+        {id:'l-f1', name:'Dominadas agarre abierto', tags:['4 × 8–10','descanso 2\''], tagStyle:['',''], restSec:120, muscle:'Dorsal / Romboides / Bíceps', desc:'Agarre prono ancho. Rango completo hasta que el mentón pase la barra. Bajá lento 2–3 seg. Pecho al frente en la subida.', tip:'Si no llegás a 8 reps limpias usá banda de asistencia. Rango completo siempre.', img:'wide+grip+pull+up+back+form'},
+        {id:'l-f2', name:'Dominadas agarre cerrado / neutro', tags:['4 × 8–10','descanso 2\''], restSec:120, muscle:'Dorsal inferior / Bíceps', desc:'Agarre supino o neutro, codos pegados al cuerpo durante toda la subida. Activa más el dorsal inferior y el bíceps.', tip:'No dejes que los codos se abran — si lo hacen perdés la activación del dorsal inferior.', img:'close+grip+chin+up+back+bicep'},
+        {id:'l-f3', name:'Fondos en paralelas', tags:['4 × 10–12','descanso 90"'], restSec:90, muscle:'Pectoral / Tríceps / Hombro anterior', desc:'Inclinación leve al frente para mayor activación del pectoral. Bajá hasta 90° de codo mínimo. Subida explosiva sin bloquear los codos.', tip:'Más inclinación = más pectoral. Más vertical = más tríceps. Elegí según tu objetivo del día.', img:'parallel+bar+dips+chest+pectoral'},
+        {id:'l-f4', name:'Remo en TRX', tags:['3 × 12','descanso 75"'], restSec:75, muscle:'Espalda media / Romboides / Bíceps', desc:'Cuerpo inclinado atrás con talones en el suelo. Tirá del TRX llevando el pecho a las manos. Cuerpo rígido como tabla en todo momento.', tip:'Más horizontal tu cuerpo = más difícil. Progresá cada semana.', img:'TRX+inverted+row+back+suspension'},
+        {id:'l-f5', name:'Farmer Carry', tags:['3 × 30 metros','máxima carga'], tagStyle:['','red'], restSec:90, muscle:'Core / Grip / Trapecio / Postura', desc:'Carga pesada en ambas manos. Caminá erguido, hombros hacia atrás, core activado todo el recorrido. La carga debe ser un desafío real.', tip:'Uno de los ejercicios más completos que existen. Subestimado por casi todo el mundo.', img:'farmer+carry+walk+core+grip+strength'},
+      ]},
+      {id:'pierna', label:'🦵 Pierna', exercises:[
+        {id:'l-pi1', name:'Hip Thrust bilateral con barra', tags:['4 × 10','pesado','bajada 3 seg'], tagStyle:['','red','red'], restSec:120, muscle:'Glúteo mayor / Isquiotibiales / LCA', desc:'Hombros en banco, barra en caderas con almohadilla. Empujá desde talones hasta línea recta. Apretá el glúteo 1 seg arriba. Bajá lento 3 seg.', tip:'Progresá carga cada semana. El glúteo fuerte protege el LCA desde arriba.', img:'barbell+hip+thrust+glute+exercise+form'},
+        {id:'l-pi2', name:'Hip Thrust unipodal', tags:['3 × 12 c/pierna','der. primero','bajada 3 seg'], tagStyle:['','red','red'], restSec:90, muscle:'Glúteo mayor / LCA / Estabilidad rodilla', desc:'Una pierna levantada. Empujá desde el talón derecho. Toda la carga en la pierna de apoyo. Bajá lento 3 seg. Siempre pierna derecha primero.', tip:'Si notás gran diferencia entre piernas, no compensés. Hacé las mismas reps aunque se sientan distintas.', img:'single+leg+hip+thrust+unilateral+glute+ACL'},
+        {id:'l-pi3', name:'Zancada cruzada / Curtsy Lunge', tags:['3 × 10 c/pierna','der. primero','bajada 3 seg'], tagStyle:['','red','red'], restSec:90, muscle:'Glúteo medio / Cuádriceps / LCA', desc:'Pie izquierdo cruza detrás de la pierna derecha como una reverencia. Bajá en 3 seg. Al cruzar la línea media activás el glúteo medio de forma más intensa.', tip:'Activador número 1 del glúteo medio. Si el glúteo medio derecho es débil, la rodilla colapsa hacia adentro.', img:'curtsy+lunge+glute+medius+crossover'},
+      ]},
+      {id:'cardio', label:'🫀 Cardio', exercises:[
+        {id:'l-ca1', name:'Cardio Zona 2 — Trote / Bici', tags:['18–20 min','65–70% FC'], tagStyle:['','blue'], restSec:0, muscle:'Sistema cardiovascular / Base aeróbica', desc:'Trote continuo en pista, bicicleta estática o remo. Ritmo conversacional — podés hablar en oraciones completas mientras lo hacés. Si no podés hablar, bajá la intensidad.', tip:'La Zona 2 construye la base aeróbica que alimenta todo lo demás. Sin esta base, el VO2 max no puede crecer.', img:'zone+2+cardio+jogging+aerobic+running'},
+      ]},
+    ]
+  },
+  {
+    id:'mar', label:'MARTES', type:'pesas', typeLabel:'Pesas + VO2 Max',
+    blocks:[
+      {id:'core', label:'🧱 Core', exercises:[
+        {id:'m-c1', name:'Elevación de piernas en barra', tags:['3v × 15','core'], restSec:0, muscle:'Core profundo', desc:'Sin balanceo. Tensión abdominal constante. Bajada controlada.', tip:'Sin balanceo.', img:'hanging+leg+raise+abs+bar'},
+        {id:'m-c2', name:'Abdominal declinado', tags:['3v × 15'], restSec:0, muscle:'Recto abdominal', desc:'Sin inercia. Subí con el abdomen. Bajá lento.', tip:'Sin jalar del cuello.', img:'decline+sit+up+abdominal'},
+        {id:'m-c3', name:'Plancha frontal', tags:['3v × 60 seg'], restSec:60, muscle:'Core completo', desc:'Cuerpo rígido. Glúteo apretado. No hundas la cadera.', tip:'Calidad sobre tiempo.', img:'forearm+plank+core+form'},
+        {id:'m-c4', name:'Wood Chopper con cable', tags:['3v × 12 c/lado','rotacional'], tagStyle:['','red'], restSec:0, muscle:'Oblicuos / Fuerza rotacional', desc:'Polea alta. Movimiento diagonal de arriba hacia abajo cruzando el cuerpo. La rotación viene del torso, no de los brazos.', tip:'Fuerza rotacional directa al golpe en pádel y los giros en fútbol.', img:'cable+wood+chopper+rotational+core'},
+      ]},
+      {id:'propio', label:'🧠 Propiocepción', exercises:[
+        {id:'m-p1', name:'Star Excursion Balance Test', tags:['3 × 6 dir.','pie derecho'], tagStyle:['','red'], restSec:60, muscle:'Control dinámico / LCA / Propiocepción', desc:'Parado en pie derecho, alcanzás con el pie izquierdo en 6 direcciones sin perder el equilibrio. El pie de alcance apenas toca el suelo, no se apoya.', tip:'Con el tiempo vas a alcanzar más lejos en cada dirección — eso es progreso real.', img:'star+excursion+balance+test+SEBT+ACL'},
+        {id:'m-p2', name:'Equilibrio en BOSU — pie derecho', tags:['3 × 40 seg','S2–3: ojos cerrados'], tagStyle:['','blue'], restSec:40, muscle:'Propiocepción / LCA / Mecanorreceptores', desc:'Parado en pie derecho sobre el BOSU. Primera serie ojos abiertos. Segunda y tercera con ojos cerrados. Sin visión el sistema nervioso trabaja exclusivamente con información propioceptiva.', tip:'Tené algo cerca para agarrarte. Cada corrección de equilibrio es aprendizaje real.', img:'single+leg+BOSU+balance+eyes+closed+ACL'},
+        {id:'m-p3', name:'Clamshell con banda', tags:['3 × 15 c/lado','der. primero','glúteo medio'], tagStyle:['','red','green'], restSec:60, muscle:'Glúteo medio / Activación previa', desc:'De lado con banda en rodillas. Abrí la rodilla superior sin mover la cadera. La cadera NO debe rotar — solo la rodilla se abre.', tip:'Hacé esto antes de cualquier carga articular — el glúteo medio activado protege la rodilla en todos los ejercicios que siguen.', img:'clamshell+exercise+resistance+band+glute+medius'},
+      ]},
+      {id:'pesas', label:'🏋️ Pesas', exercises:[
+        {id:'m-f1', name:'Press inclinado con mancuernas', tags:['4 × 10','descanso 90"'], restSec:90, muscle:'Pectoral superior / Deltoides anterior', desc:'Banco a 30–45°. Mancuernas a la altura del pecho. Empujá hacia arriba y levemente hacia adentro. Bajá lento hasta estiramiento completo.', tip:'Define el pectoral superior — visualmente el más importante para el físico estético.', img:'incline+dumbbell+press+upper+chest'},
+        {id:'m-f2', name:'Press plano con mancuernas', tags:['3 × 10','descanso 90"'], restSec:90, muscle:'Pectoral mayor / Tríceps', desc:'Mayor rango de movimiento que con barra. Escápulas retraídas. Bajá lento hasta estiramiento completo del pectoral.', tip:'Aprovechá el rango extra que dan las mancuernas — llegá más abajo que con barra.', img:'flat+dumbbell+bench+press+chest'},
+        {id:'m-f3', name:'Press militar con mancuernas', tags:['3 × 10','descanso 90"'], restSec:90, muscle:'Deltoides / Tríceps / Trapecio', desc:'De pie, core activado. Empujá hacia arriba sin hiperextender la zona lumbar. Bajá lento hasta la altura de los hombros.', tip:'No bloqueés los codos arriba. No hiperextiendas la lumbar.', img:'dumbbell+shoulder+press+military'},
+        {id:'m-f4', name:'Remo con mancuerna', tags:['3 × 10 c/lado','descanso 75"'], restSec:75, muscle:'Dorsal / Romboides / Bíceps', desc:'Rodilla y mano del mismo lado en el banco. Tirá la mancuerna hacia la cadera. No rotés el torso. Apretá el dorsal en la parte alta.', tip:'El torso no rota — si rota, la mancuerna está demasiado pesada.', img:'dumbbell+row+one+arm+back'},
+        {id:'m-f5', name:'Face Pull con polea', tags:['3 × 15','nunca saltear'], tagStyle:['','red'], restSec:60, muscle:'Deltoides posterior / Manguito rotador', desc:'Polea alta con cuerda. Tirá hacia la cara separando los extremos, codos a 90°. Fundamental para la salud del hombro en pádel.', tip:'Nunca saltear este ejercicio — es preventivo tanto como estético.', img:'face+pull+cable+rope+rear+deltoid'},
+        {id:'m-f6', name:'Curl martillo con mancuernas', tags:['3 × 10','descanso 60"'], restSec:60, muscle:'Bíceps / Braquiorradial', desc:'Agarre neutro (pulgares arriba). Sin balanceo de torso. Rango completo.', tip:'Sin balanceo.', img:'hammer+curl+dumbbell+neutral+grip'},
+        {id:'m-f7', name:'Extensión tríceps en cuerda', tags:['3 × 12','descanso 60"'], restSec:60, muscle:'Tríceps (3 cabezas)', desc:'Polea alta con cuerda. Codos fijos al cuerpo. Separar la cuerda al extender los brazos. Extensión completa abajo.', tip:'Codos fijos. La separación al final activa las 3 cabezas del tríceps.', img:'tricep+rope+pushdown+cable'},
+      ]},
+      {id:'pierna', label:'🦵 Pierna', exercises:[
+        {id:'m-pi1', name:'Sentadilla búlgara con mancuernas', tags:['4 × 10 c/pierna','der. primero','bajada 4 seg'], tagStyle:['','red','red'], restSec:120, muscle:'Cuádriceps / Glúteo / LCA excéntrico', desc:'Pie trasero elevado en banco. Rodilla delantera NO pasa la punta del pie. Sin valgo. Bajada obligatoria en 4 segundos — esto es lo que protege el LCA.', tip:'La bajada en 4 seg no es opcional. Sin tempo excéntrico es solo una sentadilla.', img:'bulgarian+split+squat+dumbbell+eccentric'},
+        {id:'m-pi2', name:'Peso muerto convencional con barra', tags:['4 × 6','pesado','bajada 3 seg'], tagStyle:['','red','red'], restSec:150, muscle:'Isquiotibiales / Glúteo / Lumbar / Trapecio', desc:'Espalda neutra, pecho hacia arriba. Empujá el suelo con los talones para subir — no "jalés" la barra. Bajá lento 3 seg con la barra cerca del cuerpo.', tip:'El ejercicio bilateral más completo para fuerza funcional. Progresá carga semanalmente.', img:'conventional+deadlift+barbell+form'},
+        {id:'m-pi3', name:'Curl femoral en máquina (acostado)', tags:['4 × 10','bajada 4 seg ⚠️'], tagStyle:['','red'], restSec:90, muscle:'Isquiotibiales / LCA (freno activo)', desc:'Acostado boca abajo. Flexioná llevando los talones al glúteo. Apretá el isquio 1 seg arriba. Bajada OBLIGATORIA en 4 seg — esta es la fase excéntrica que fortalece el isquio como freno del LCA.', tip:'Sin la bajada en 4 seg el curl femoral pierde su principal efecto protector del LCA.', img:'lying+leg+curl+machine+hamstring+eccentric'},
+        {id:'m-pi4', name:'Isquiotibiales caminando sobre roller', tags:['3 × 8','lento y controlado'], tagStyle:['','red'], restSec:90, muscle:'Isquiotibiales / Excéntrico-concéntrico', desc:'Acostado boca arriba, talones sobre el roller, cadera elevada. Caminá con los talones alejando el roller y volvé. Movimiento lento en ambas direcciones. Cadera elevada todo el tiempo.', tip:'Trabaja el isquio en todo el rango — más completo que la máquina para la función real en fútbol.', img:'hamstring+roller+walkout+bridge+eccentric'},
+        {id:'m-pi5', name:'Side Step con banda', tags:['3 × 15 pasos c/lado','glúteo medio'], tagStyle:['','green'], restSec:60, muscle:'Glúteo medio / Abductores', desc:'Banda en rodillas o tobillos. En semisquadilla, dá pasos laterales amplios. Los pies nunca se juntan completamente. Tronco erguido.', tip:'Glúteo medio en activación continua. Corrige la compensación de la pierna izquierda.', img:'lateral+band+walk+glute+medius'},
+      ]},
+      {id:'cardio', label:'🫀 VO2 Max', exercises:[
+        {id:'m-ca1', name:'Intervalos 2\' / 2\' — 5 rondas', tags:['5 rondas','85–90% FC'], tagStyle:['','red'], restSec:120, muscle:'VO2 max / Resistencia cardiovascular', desc:'2 minutos al límite (no podés hablar) + 2 minutos caminando. Repetir 5 veces. En bici, pista o elíptica. Este es el bloque más importante para recuperar la capacidad de jugar 80 minutos.', tip:'La calidad de los 2 min de trabajo es lo que importa. Si no podés llegar al límite, tomá más recuperación.', img:'HIIT+interval+VO2+max+cardio+running'},
+      ]},
+    ]
+  },
+  {
+    id:'mie', label:'MIÉRC.', type:'cali', typeLabel:'Calistenia + Cardio Z2',
+    blocks:[
+      {id:'core', label:'🧱 Core', exercises:[
+        {id:'mi-c1', name:'Elevación de piernas en barra', tags:['3v × 15','core'], restSec:0, muscle:'Core profundo', desc:'Sin balanceo. Tensión abdominal constante.', tip:'Sin balanceo.', img:'hanging+leg+raise+abs+bar'},
+        {id:'mi-c2', name:'Abdominal declinado', tags:['3v × 15'], restSec:0, muscle:'Recto abdominal', desc:'Sin inercia. Subí con el abdomen.', tip:'Sin jalar del cuello.', img:'decline+sit+up+abdominal'},
+        {id:'mi-c3', name:'TRX Circles', tags:['3v × 10 c/lado','oblicuos'], restSec:0, muscle:'Oblicuos / Estabilizadores profundos', desc:'Plancha con pies en las asas del TRX. Hacé círculos lentos con las caderas en ambas direcciones. La cadera no debe caer.', tip:'Movimiento lento. Cadera alineada siempre.', img:'TRX+hip+circles+plank+core'},
+        {id:'mi-c4', name:'Plancha lateral con elevación de cadera', tags:['3v × 12 c/lado'], restSec:0, muscle:'Oblicuos / Glúteo medio lateral', desc:'Apoyado en antebrazo lateral. Bajá la cadera casi al suelo sin tocar y subí hasta línea recta. Activa oblicuos y glúteo medio simultáneamente.', tip:'No toques el suelo en la bajada — ese contacto es el descanso que no querés dar.', img:'side+plank+hip+dip+raise+obliques'},
+      ]},
+      {id:'propio', label:'🧠 Propiocepción', exercises:[
+        {id:'mi-p1', name:'Peso muerto unipodal — ojos cerrados', tags:['3 × 8','pie derecho','bajada 3 seg'], tagStyle:['','red','red'], restSec:60, muscle:'Propiocepción / Isquiotibiales / Glúteo', desc:'Igual que el peso muerto unipodal pero con ojos cerrados desde la segunda serie. Sin visión el cerebro activa todos los receptores propioceptivos de la cadena posterior.', tip:'Es el ejercicio propioceptivo más completo — combina equilibrio, fuerza excéntrica e información sensorial sin visión.', img:'single+leg+deadlift+eyes+closed+proprioception'},
+        {id:'mi-p2', name:'Depth Drop bilateral', tags:['3 × 5','frenada completa','sin salto'], tagStyle:['','red',''], restSec:90, muscle:'Absorción de impacto / LCA / Control neuromuscular', desc:'Bajá del cajón bajo y frenate completamente al aterrizar en dos pies. Sin rebotar. Rodillas alineadas, absorción con tobillo, rodilla y cadera. El objetivo es la absorción, no el salto.', tip:'Cada repetición le enseña al cerebro que la rodilla puede manejar el impacto sin que el LCA ceda.', img:'depth+drop+landing+bilateral+ACL+neuromuscular'},
+        {id:'mi-p3', name:'Clamshell con banda', tags:['3 × 15 c/lado','der. primero','glúteo medio'], tagStyle:['','red','green'], restSec:60, muscle:'Glúteo medio / Activación pre-ejercicio', desc:'De lado con banda en rodillas. Abrí la rodilla superior sin mover la cadera. Glúteo medio puro.', tip:'Empezá por el lado derecho.', img:'clamshell+exercise+resistance+band+glute+medius'},
+      ]},
+      {id:'plio', label:'⚡ Pliometría', exercises:[
+        {id:'mi-pl1', name:'Saltos laterales bilaterales', tags:['3 × 8 c/lado','descanso 60"'], restSec:60, muscle:'Agilidad lateral / Absorción de impacto', desc:'Saltá de lado a lado en dos pies. Aterrizá suave absorbiendo con las rodillas. Pausa de 1 seg antes de saltar al otro lado. Rodillas alineadas siempre.', tip:'Si las rodillas colapsan al aterrizar, reducí la distancia hasta controlar la alineación.', img:'lateral+jump+bilateral+plyometric+landing'},
+        {id:'mi-pl2', name:'Bulgarian Jump Squat', tags:['3 × 5 c/pierna','der. primero','descanso 90"'], tagStyle:['','red',''], restSec:90, muscle:'Potencia unipodal / Glúteo / Cuádriceps', desc:'Pie trasero elevado en banco. Bajá a la zancada y desde abajo explotá hacia arriba con máxima potencia. Aterrizá controlado. Pierna derecha siempre primero.', tip:'Si el aterrizaje no es limpio, volvé al salto bilateral hasta mejorar el control.', img:'bulgarian+split+squat+jump+plyometric'},
+      ]},
+      {id:'cali', label:'💪 Calistenia', exercises:[
+        {id:'mi-f1', name:'Dominadas agarre abierto', tags:['4 × 8–10','descanso 2\''], restSec:120, muscle:'Dorsal / Romboides / Bíceps', desc:'Rango completo. Explosión en la subida. Pecho al frente.', tip:'Usá banda si no llegás a 8 reps limpias.', img:'wide+grip+pull+up+back+form'},
+        {id:'mi-f2', name:'Fondos en paralelas', tags:['4 × 10–12','descanso 90"'], restSec:90, muscle:'Pectoral / Tríceps / Hombro anterior', desc:'Inclinación al frente para mayor pectoral. Bajá a 90° de codo. Subida explosiva.', tip:'Bajada lenta, subida explosiva.', img:'parallel+bar+dips+chest+pectoral'},
+        {id:'mi-f3', name:'Flexiones en TRX', tags:['3 × 12','descanso 75"'], restSec:75, muscle:'Pectoral / Core / Estabilizadores', desc:'Manos en las asas del TRX, cuerpo en diagonal. Más horizontal tu cuerpo = más difícil. Cuerpo rígido como tabla.', tip:'Progresá inclinándote más cada semana.', img:'TRX+push+up+suspension+chest'},
+        {id:'mi-f4', name:'Remo en TRX', tags:['3 × 12','descanso 75"'], restSec:75, muscle:'Espalda media / Romboides / Bíceps', desc:'Cuerpo inclinado atrás. Tirá llevando el pecho a las manos. Más horizontal = más difícil.', tip:'Cuerpo rígido. No dejes caer la cadera.', img:'TRX+inverted+row+back+suspension'},
+        {id:'mi-f5', name:'Farmer Carry', tags:['3 × 30 metros','descanso 90"'], restSec:90, muscle:'Core / Grip / Trapecio / Postura', desc:'Carga pesada en ambas manos. Erguido, hombros atrás, core activado todo el recorrido.', tip:'Carga máxima con postura correcta.', img:'farmer+carry+walk+core+grip'},
+      ]},
+      {id:'pierna', label:'🦵 Pierna', exercises:[
+        {id:'mi-pi1', name:'Leg Curl en TRX (boca arriba)', tags:['3 × 10','bajada 3 seg'], tagStyle:['','red'], restSec:90, muscle:'Isquiotibiales / Glúteo / Core', desc:'Acostado boca arriba, talones en las asas del TRX. Levantá la cadera del suelo. Jalá los talones hacia el glúteo. Cadera elevada todo el tiempo. Bajá lento 3 seg.', tip:'Más funcional que la máquina — los isquios trabajan en dos articulaciones simultáneamente como en el fútbol.', img:'TRX+hamstring+curl+bridge+suspension'},
+        {id:'mi-pi2', name:'Step Up explosivo', tags:['3 × 8 c/pierna','der. primero','bajada 3 seg'], tagStyle:['','red','red'], restSec:90, muscle:'Cuádriceps / Glúteo / Potencia unipodal', desc:'Cajón a altura de rodilla. Explosión solo desde la pierna de arriba — la trasera no ayuda. Bajá lento 3 seg.', tip:'Si usás la pierna trasera para ayudar, el ejercicio pierde su efecto.', img:'step+up+box+explosive+single+leg'},
+        {id:'mi-pi3', name:'Zancada búlgara con mancuernas', tags:['3 × 10 c/pierna','der. primero','bajada 4 seg'], tagStyle:['','red','red'], restSec:90, muscle:'Cuádriceps / Glúteo / LCA excéntrico', desc:'Pie trasero elevado. Rodilla delantera sin valgo. Bajada en 4 seg. Pierna derecha siempre primero.', tip:'Bajada en 4 seg obligatorio.', img:'bulgarian+split+squat+dumbbell+eccentric'},
+        {id:'mi-pi4', name:'Monster Walk con banda', tags:['3 × 15 pasos c/lado','glúteo medio'], tagStyle:['','green'], restSec:60, muscle:'Glúteo medio / Abductores / Compensación', desc:'Banda en tobillos. Semisquadilla, pasos laterales amplios. Corrige la compensación de la pierna izquierda.', tip:'Tensión en la banda todo el tiempo.', img:'monster+walk+resistance+band+glute+medius'},
+      ]},
+      {id:'cardio', label:'🫀 Cardio Z2', exercises:[
+        {id:'mi-ca1', name:'Trote continuo / Bici — Zona 2', tags:['18–20 min','65–70% FC'], tagStyle:['','blue'], restSec:0, muscle:'Base aeróbica / Recuperación activa', desc:'Ritmo conversacional. Zona 2 en el día de miércoles es recuperación activa — permite que el sistema nervioso se recupere del trabajo de lunes y martes sin detener el progreso cardiovascular.', tip:'Si podés hablar en oraciones completas, estás en la zona correcta.', img:'zone+2+cardio+jogging+aerobic'},
+      ]},
+    ]
+  },
+  {
+    id:'jue', label:'JUEVES', type:'pesas', typeLabel:'Pesas + Sprint',
+    blocks:[
+      {id:'core', label:'🧱 Core', exercises:[
+        {id:'j-c1', name:'Elevación de piernas en barra', tags:['3v × 15'], restSec:0, muscle:'Core profundo', desc:'Sin balanceo. Tensión abdominal constante.', tip:'Sin balanceo.', img:'hanging+leg+raise+abs+bar'},
+        {id:'j-c2', name:'Abdominal declinado', tags:['3v × 15'], restSec:0, muscle:'Recto abdominal', desc:'Sin inercia.', tip:'Sin jalar del cuello.', img:'decline+sit+up+abdominal'},
+        {id:'j-c3', name:'Plancha frontal', tags:['3v × 60 seg'], restSec:60, muscle:'Core completo', desc:'Cuerpo rígido. Glúteo apretado.', tip:'Calidad sobre tiempo.', img:'forearm+plank+core+form'},
+        {id:'j-c4', name:'Rotaciones en TRX', tags:['3v × 10 c/lado','rotacional'], tagStyle:['','red'], restSec:0, muscle:'Core rotacional / Oblicuos', desc:'Agarrá el TRX con ambas manos extendidas al frente. Rotá el torso de lado a lado manteniendo la cadera estable. El movimiento viene del torso, no de los brazos.', tip:'Fuerza rotacional directamente transferible al golpe en pádel.', img:'TRX+rotation+core+rotational+power'},
+      ]},
+      {id:'propio', label:'🧠 Propiocepción', exercises:[
+        {id:'j-p1', name:'Star Excursion en BOSU', tags:['3 × 6 dir.','pie derecho','nivel avanzado'], tagStyle:['','red','blue'], restSec:60, muscle:'Propiocepción avanzada / LCA / BOSU', desc:'Igual que el Star Excursion del martes pero parado sobre el BOSU en pie derecho. Si al principio es demasiado difícil, hacélo en suelo plano y progresá al BOSU.', tip:'El ejercicio propioceptivo más avanzado del programa. La dificultad es normal.', img:'star+excursion+BOSU+advanced+ACL+balance'},
+        {id:'j-p2', name:'Recepción de pelota — pie derecho', tags:['3 × 10','pie derecho','reactivo'], tagStyle:['','red','blue'], restSec:60, muscle:'Propiocepción reactiva / Retorno al fútbol', desc:'Parado en pie derecho, lanzá una pelota contra la pared y recibila. El cuerpo debe reaccionar automáticamente sin tiempo de preparación. Podés hacerlo sobre BOSU para mayor dificultad.', tip:'El ejercicio más específico para el retorno al fútbol — simula los ajustes de equilibrio durante el juego.', img:'single+leg+balance+ball+catch+proprioception+soccer'},
+        {id:'j-p3', name:'Elevación lateral de cadera en suelo', tags:['3 × 15 c/lado','der. primero','glúteo medio'], tagStyle:['','red','green'], restSec:60, muscle:'Glúteo medio puro / Sin carga articular', desc:'De lado en el suelo, levantá la pierna superior en abducción. Pie en flex. Bajá lento. Activación pura del glúteo medio sin estrés articular.', tip:'Podés agregar banda en los tobillos para mayor resistencia.', img:'side+lying+hip+abduction+glute+medius'},
+      ]},
+      {id:'pesas', label:'🏋️ Pesas', exercises:[
+        {id:'j-f1', name:'Press inclinado con mancuernas', tags:['4 × 10','descanso 90"'], restSec:90, muscle:'Pectoral superior / Deltoides anterior', desc:'Banco a 30–45°. Define el pectoral superior. Bajá hasta estiramiento completo, subí con intención.', tip:'El ángulo de 30° activa más pectoral que 45°.', img:'incline+dumbbell+press+upper+chest'},
+        {id:'j-f2', name:'Elevaciones laterales', tags:['3 × 15','descanso 60"'], restSec:60, muscle:'Deltoides medial / Anchura de hombros', desc:'Sin inercia. Codo ligeramente flexionado. Subí hasta la altura de los hombros. Bajá lento 2 seg.', tip:'Define la anchura del hombro — el deltoides medial es lo que da el aspecto atlético.', img:'lateral+raise+dumbbell+shoulder+deltoid'},
+        {id:'j-f3', name:'Jalón al pecho agarre ancho', tags:['4 × 10','descanso 90"'], restSec:90, muscle:'Dorsal / Espalda / V-taper', desc:'Pecho hacia arriba y levemente hacia adelante. Tirá la barra hasta el mentón llevando los codos hacia abajo y atrás. Volvé lento.', tip:'Construye el V-taper. Alternativa a dominadas en días de pesas.', img:'wide+grip+lat+pulldown+back+V+taper'},
+        {id:'j-f4', name:'Face Pull con polea', tags:['3 × 15','nunca saltear'], tagStyle:['','red'], restSec:60, muscle:'Deltoides posterior / Manguito rotador', desc:'Polea alta con cuerda. Tirá hacia la cara separando los extremos, codos a 90°. Fundamental para la salud del hombro.', tip:'Nunca saltear — es preventivo tanto como estético.', img:'face+pull+cable+rope+rear+deltoid'},
+        {id:'j-f5', name:'Curl bíceps con barra', tags:['3 × 10','descanso 60"'], restSec:60, muscle:'Bíceps braquial', desc:'Sin balanceo de torso. Supinación completa arriba. Bajada lenta 2–3 seg.', tip:'Sin balanceo.', img:'barbell+curl+bicep+standing'},
+        {id:'j-f6', name:'Extensión tríceps en cuerda', tags:['3 × 12','descanso 60"'], restSec:60, muscle:'Tríceps (3 cabezas)', desc:'Codos fijos al cuerpo. Separar la cuerda al extender. Extensión completa abajo.', tip:'Codos fijos siempre.', img:'tricep+rope+pushdown+cable'},
+      ]},
+      {id:'pierna', label:'🦵 Pierna', exercises:[
+        {id:'j-pi1', name:'Curl femoral en máquina', tags:['4 × 10','bajada 4 seg ⚠️','PRIORIDAD DÍA'], tagStyle:['','red','red'], restSec:90, muscle:'Isquiotibiales / LCA / Cadena posterior', desc:'Prioridad máxima del jueves. Acostado boca abajo. Bajada OBLIGATORIA en 4 seg. Apretá el isquio 1 seg arriba. Esta bajada es la que fortalece el isquio como freno activo de la tibia.', tip:'Sin la bajada en 4 seg el curl femoral pierde su principal efecto protector del LCA.', img:'lying+leg+curl+machine+hamstring+eccentric'},
+        {id:'j-pi2', name:'Nordic Hamstring', tags:['3 × 6','bajada máx. lenta','descanso 2\''], tagStyle:['','red',''], restSec:120, muscle:'Isquiotibiales excéntrico / Prevención LCA', desc:'De rodillas con talones fijos (compañero o barra). Bajate hacia adelante lo más lento posible frenando con los isquiotibiales. Cuando no puedas más, apoyá las manos y volvé empujando.', tip:'Evidencia: reduce hasta 51% el riesgo de desgarro de isquiotibiales en fútbol. Las primeras semanas bajás muy poco — eso es normal.', img:'nordic+hamstring+curl+eccentric+football+ACL'},
+        {id:'j-pi3', name:'Peso muerto unipodal', tags:['3 × 10 c/pierna','der. primero','bajada 3 seg'], tagStyle:['','red','red'], restSec:90, muscle:'Isquiotibiales / Glúteo / Propiocepción', desc:'Espalda plana, cadera cuadrada. Control de equilibrio. Cadena posterior completa. Pierna derecha siempre primero.', tip:'Espalda plana y cadera cuadrada en todo momento.', img:'single+leg+deadlift+dumbbell+balance+hamstring'},
+        {id:'j-pi4', name:'Elevación de gemelo unipodal', tags:['3 × 15 c/pierna','der. primero'], tagStyle:['','red'], restSec:60, muscle:'Gemelo / Sóleo / Tibial', desc:'En el borde de un escalón en un pie. Bajá el talón hasta el máximo estiramiento. Subí hasta la punta del pie. Rango completo.', tip:'Protege el tibial izquierdo sobrecargado fortaleciendo la cadena distal de ambas piernas.', img:'single+leg+calf+raise+eccentric+step'},
+        {id:'j-pi5', name:'Abducción en polea de pie', tags:['3 × 15 c/pierna','der. primero','glúteo medio'], tagStyle:['','red','green'], restSec:60, muscle:'Glúteo medio / Abductores', desc:'Polea baja en tobillo. Parado en el pie opuesto, llevá la pierna con la polea hacia afuera lateralmente. Volvé lento.', tip:'Activa directamente el glúteo medio. Empezá por la derecha.', img:'cable+hip+abduction+standing+glute+medius'},
+      ]},
+      {id:'cardio', label:'🫀 Sprint', exercises:[
+        {id:'j-ca1', name:'Sprint Anaeróbico — 20" / 100"', tags:['8 rondas','100% intensidad'], tagStyle:['','red'], restSec:100, muscle:'Potencia anaeróbica / Velocidad / Pique', desc:'Sprint máximo 20 seg + caminata 100 seg. La pausa larga garantiza que cada sprint sea de máxima calidad. 8 rondas en la pista del gimnasio.', tip:'El objetivo no es cansarse — es que cada uno de los 8 sprints sea al 100%. Calidad sobre cantidad.', img:'sprint+track+running+maximum+speed+anaerobic'},
+      ]},
+    ]
+  },
+  {
+    id:'vie', label:'VIERNES', type:'cali', typeLabel:'Calistenia Potencia + HIIT',
+    blocks:[
+      {id:'core', label:'🧱 Core', exercises:[
+        {id:'v-c1', name:'Elevación de piernas en barra', tags:['3v × 15'], restSec:0, muscle:'Core profundo', desc:'Sin balanceo. Tensión abdominal constante.', tip:'Sin balanceo.', img:'hanging+leg+raise+abs+bar'},
+        {id:'v-c2', name:'Abdominal declinado', tags:['3v × 15'], restSec:0, muscle:'Recto abdominal', desc:'Sin inercia.', tip:'Sin jalar del cuello.', img:'decline+sit+up+abdominal'},
+        {id:'v-c3', name:'TRX Circles', tags:['3v × 10 c/lado'], restSec:0, muscle:'Oblicuos / Estabilizadores', desc:'Plancha con pies en TRX. Círculos lentos con la cadera. Cadera alineada siempre.', tip:'Movimiento lento.', img:'TRX+hip+circles+plank+core'},
+        {id:'v-c4', name:'Plancha frontal', tags:['3v × 60 seg'], restSec:60, muscle:'Core completo', desc:'Cuerpo rígido. Glúteo apretado. No hundas la cadera.', tip:'Calidad sobre tiempo.', img:'forearm+plank+core+form'},
+      ]},
+      {id:'propio', label:'🧠 Propiocepción', exercises:[
+        {id:'v-p1', name:'Salto y freno unipodal — derecha', tags:['3 × 6','pie derecho','progresión fases'], tagStyle:['','red','blue'], restSec:60, muscle:'Propiocepción reactiva / LCA / Confianza', desc:'Saltá hacia adelante y aterrizá en pie derecho frenando completamente. Aguantá 2 seg inmóvil. Fase A: salto corto. Fase B: salto normal. Fase C: encadenado. La distancia aumenta a medida que la confianza crece.', tip:'Cuando podés hacerlo en pie derecho con la misma confianza que en el izquierdo, estás listo para volver al fútbol a full.', img:'single+leg+hop+stick+landing+ACL+return+sport'},
+        {id:'v-p2', name:'BOSU + recepción de pelota — pie derecho', tags:['3 × 10','pie derecho','reactivo'], tagStyle:['','red','blue'], restSec:60, muscle:'Propiocepción reactiva avanzada / Fútbol', desc:'Parado en pie derecho sobre BOSU. Lanzá y recibí una pelota contra la pared. El cuerpo reacciona automáticamente sin preparación.', tip:'El ejercicio más específico para el retorno al fútbol.', img:'BOSU+single+leg+ball+toss+reactive+proprioception'},
+        {id:'v-p3', name:'Monster Walk + salto lateral con aterrizaje', tags:['3 × 10 c/lado','glúteo medio'], tagStyle:['','green'], restSec:60, muscle:'Glúteo medio + Propiocepción dinámica', desc:'Banda en tobillos. Saltá lateralmente aterrizando en un pie y aguantando 1 seg. Combina glúteo medio con propiocepción dinámica de aterrizaje.', tip:'Combina los dos objetivos más importantes del bloque.', img:'lateral+hop+band+glute+medius+single+leg'},
+      ]},
+      {id:'plio', label:'⚡ Pliometría', exercises:[
+        {id:'v-pl1', name:'Box Jump altura completa', tags:['3 × 5','máxima explosión','descanso 90"'], tagStyle:['','red',''], restSec:90, muscle:'Potencia máxima / Cuádriceps / Glúteo', desc:'Cajón a altura completa. Máxima explosión. Aterrizá suave y silencioso. Bajá caminando. El foco es la potencia de despegue.', tip:'Ya trabajaste el aterrizaje en los otros días — hoy el foco es la explosión.', img:'box+jump+full+height+explosive+power'},
+        {id:'v-pl2', name:'Bounds — saltos amplios alternados', tags:['3 × 20 metros','descanso 90"'], restSec:90, muscle:'Velocidad / Zancada / Sprint / Potencia', desc:'Saltos amplios alternando piernas como una carrera exagerada. Cada salto busca máxima distancia horizontal. Aterrizás en un pie y de ahí explotás al siguiente.', tip:'Transferencia directa a la zancada y velocidad de sprint.', img:'bounding+plyometric+alternating+horizontal+power'},
+        {id:'v-pl3', name:'Salto unipodal encadenado', tags:['3 × 3 saltos seguidos','der. primero','descanso 75"'], tagStyle:['','red',''], restSec:75, muscle:'Potencia unipodal / Reactividad / LCA avanzado', desc:'3 saltos consecutivos hacia adelante en pie derecho sin pausa entre aterrizaje y siguiente salto. El rebote debe ser inmediato — tiempo de contacto mínimo.', tip:'Solo hacés esto cuando el salto y freno unipodal se hace sin hesitación. Si hay duda, volvé a Fase B.', img:'single+leg+consecutive+hops+reactive+plyometric'},
+      ]},
+      {id:'cali', label:'💪 Calistenia', exercises:[
+        {id:'v-f1', name:'Dominadas explosivas agarre abierto', tags:['4 × 8','explosivo','descanso 2\''], tagStyle:['','red',''], restSec:120, muscle:'Dorsal / Potencia de tracción', desc:'Igual que las dominadas normales pero con intención explosiva en la subida — buscás que el pecho llegue a la barra con velocidad. El viernes se entrena potencia, no solo fuerza. Bajada lenta 2–3 seg.', tip:'La combinación de bajada lenta + subida explosiva es lo que desarrolla potencia real.', img:'explosive+pull+up+power+chest+to+bar'},
+        {id:'v-f2', name:'Dominadas explosivas — pecho a la barra', tags:['3 × 5','máxima potencia','descanso 2\''], tagStyle:['','red',''], restSec:120, muscle:'Potencia máxima de tracción', desc:'Subida con la máxima potencia posible intentando llevar el pecho a la barra. Si no llegás al pecho, buscá pasar el mentón e ir progresando.', tip:'Potencia de tracción máxima. El ejercicio de calistenia más avanzado del programa.', img:'explosive+chest+to+bar+pull+up+power'},
+        {id:'v-f3', name:'Fondos en paralelas', tags:['4 × 10','bajada 2 seg · subida explosiva'], tagStyle:['','red'], restSec:90, muscle:'Pectoral / Tríceps / Potencia de empuje', desc:'Bajada controlada en 2 seg, subida explosiva. La combinación de excéntrico controlado + concéntrico explosivo desarrolla potencia real de empuje.', tip:'Bajada lenta + subida explosiva = potencia. No hagas las dos fases rápido.', img:'dips+parallel+bars+explosive+power'},
+        {id:'v-f4', name:'Flexiones explosivas', tags:['3 × 8–10','descanso 90"'], restSec:90, muscle:'Pectoral / Tríceps / Potencia', desc:'Flexión hasta abajo, subida con máxima explosión. Con palmada si podés. Sin despegar las manos si no llegás. El objetivo es que el empuje sea tan potente que el cuerpo se eleve.', tip:'Explosión máxima hacia arriba.', img:'explosive+clap+push+up+plyometric+chest'},
+        {id:'v-f5', name:'Farmer Carry', tags:['3 × 30 metros','carga máxima'], tagStyle:['','red'], restSec:90, muscle:'Core / Grip / Trapecio / Postura', desc:'Carga máxima de la semana manteniendo postura erguida. Cierra el bloque de fuerza del viernes.', tip:'El más pesado de la semana.', img:'farmer+carry+walk+heavy+core+grip'},
+      ]},
+      {id:'pierna', label:'🦵 Pierna', exercises:[
+        {id:'v-pi1', name:'Hip Thrust unipodal — explosivo', tags:['3 × 12 c/pierna','der. primero','explosivo arriba / bajada 3 seg'], tagStyle:['','red','red'], restSec:90, muscle:'Glúteo / Potencia / LCA', desc:'Subida explosiva buscando potencia en la extensión de cadera. Bajada lenta 3 seg. Combina potencia concéntrica con fuerza excéntrica en el mismo ejercicio.', tip:'Pierna derecha siempre primero.', img:'single+leg+hip+thrust+explosive+power+glute'},
+        {id:'v-pi2', name:'Step Down Anterior', tags:['3 × 10 c/pierna','der. primero','bajada 4 seg ⚠️'], tagStyle:['','red','red'], restSec:90, muscle:'Cuádriceps / LCA / Control excéntrico viernes', desc:'El más importante del viernes para el LCA. Bajada en 4 seg obligatorio. Rodilla alineada sin valgo. Cierre de la semana de trabajo excéntrico de cuádriceps.', tip:'Bajada en 4 seg siempre.', img:'step+down+anterior+eccentric+quad+ACL'},
+        {id:'v-pi3', name:'Peso muerto unipodal', tags:['3 × 10 c/pierna','der. primero','bajada 3 seg'], tagStyle:['','red','red'], restSec:90, muscle:'Isquiotibiales / Glúteo / Cadena posterior', desc:'Espalda plana, cadera cuadrada. Control de equilibrio. Pierna derecha siempre primero.', tip:'Cadena posterior completa.', img:'single+leg+deadlift+dumbbell+balance+hamstring'},
+        {id:'v-pi4', name:'Plancha lateral con elevación de pierna', tags:['3 × 12 c/lado','aductores + glúteo medio'], tagStyle:['','green'], restSec:60, muscle:'Aductores / Glúteo medio / Estabilidad lateral', desc:'Plancha lateral en antebrazo. Levantá la pierna superior en abducción. Aductores en la pierna inferior, abductores en la superior. Estabilidad lateral completa.', tip:'Cierre del bloque de pierna del viernes y de la semana.', img:'side+plank+leg+raise+hip+abductor+adductor'},
+      ]},
+      {id:'cardio', label:'🫀 HIIT', exercises:[
+        {id:'v-ca1', name:'HIIT — Protocolo 30" / 30"', tags:['12 rondas','100% intensidad'], tagStyle:['','red'], restSec:30, muscle:'Potencia anaeróbica / Resistencia cardiovascular', desc:'30 seg al máximo + 30 seg caminando. 12 rondas en la pista. El cierre más exigente de la semana. Los 30 seg simulan los esfuerzos largos del fútbol y los puntos del pádel.', tip:'La pausa corta reentrena la recuperación rápida — exactamente lo que perdiste durante el año sin jugar.', img:'HIIT+30+30+sprint+interval+track+cardio'},
+      ]},
+    ]
+  },
+];
+
+// Build search index
+const searchIndex = [];
+DAYS.forEach(day => {
+  day.blocks.forEach(block => {
+    block.exercises.forEach(ex => {
+      searchIndex.push({
+        day: day.label,
+        dayId: day.id,
+        block: block.label,
+        name: ex.name,
+        tags: ex.tags.join(' '),
+        muscle: ex.muscle,
+        desc: ex.desc,
+        img: ex.img,
+        detail: ex.tags.join(' · '),
+      });
+    });
+  });
+});
+
+// State
+let currentDay = 'lun';
+let currentBlock = null;
+let completedExercises = JSON.parse(localStorage.getItem('completed') || '{}');
+let timerInterval = null;
+let timerSeconds = 60;
+let timerTotal = 60;
+let timerRunning = false;
+
+// ════════════════════════════════
+// RENDER
+// ════════════════════════════════
+function renderDayChips() {
+  const c = document.getElementById('dayChips');
+  c.innerHTML = DAYS.map(d => {
+    const dayCompleted = isDayComplete(d.id);
+    return `<div class="day-chip ${d.id === currentDay ? 'active' : ''} ${dayCompleted ? 'done-day' : ''}" onclick="selectDay('${d.id}')">${d.label}${dayCompleted ? ' ✓' : ''}</div>`;
+  }).join('');
+}
+
+function renderBlockPills() {
+  const day = DAYS.find(d => d.id === currentDay);
+  const c = document.getElementById('blockPills');
+  if (!currentBlock) currentBlock = day.blocks[0].id;
+  c.innerHTML = day.blocks.map(b =>
+    `<div class="block-pill ${b.id === currentBlock ? 'active' : ''}" onclick="selectBlock('${b.id}')">${b.label}</div>`
+  ).join('');
+}
+
+function renderExercises() {
+  const day = DAYS.find(d => d.id === currentDay);
+  const block = day.blocks.find(b => b.id === currentBlock) || day.blocks[0];
+  const c = document.getElementById('exList');
+  c.innerHTML = `<div class="block-label">${block.label}</div>` +
+    block.exercises.map(ex => {
+      const done = completedExercises[ex.id];
+      const tagHtml = ex.tags.map((t,i) => {
+        const s = ex.tagStyle && ex.tagStyle[i] ? ex.tagStyle[i] : '';
+        return `<span class="ex-tag ${s}">${t}</span>`;
+      }).join('');
+      const restLabel = ex.restSec > 0 ? `⏱ ${ex.restSec >= 60 ? Math.floor(ex.restSec/60)+'\''+( ex.restSec%60 ? (ex.restSec%60)+'"' : '') : ex.restSec+'"'}` : '';
+      return `
+        <div class="ex-card ${done ? 'completed' : ''}" id="card-${ex.id}">
+          <div class="ex-main">
+            <div class="ex-check" onclick="toggleDone('${ex.id}')">${done ? '✓' : ''}</div>
+            <div class="ex-info">
+              <div class="ex-name">${ex.name}</div>
+              <div class="ex-tags">${tagHtml}</div>
+            </div>
+            <div class="ex-actions">
+              <button class="action-btn btn-img" onclick="window.open('https://www.google.com/search?q=${ex.img}&tbm=isch','_blank')">🔍 Imagen</button>
+              ${ex.restSec > 0 ? `<button class="action-btn btn-timer" onclick="openTimer(${ex.restSec},'${ex.name.replace(/'/g,'\\'')}')">⏱ ${restLabel}</button>` : ''}
+              <button class="action-btn btn-info" onclick="toggleDetail('${ex.id}')">ℹ Info</button>
+            </div>
+          </div>
+          <div class="ex-detail" id="detail-${ex.id}">
+            <div class="ex-how">¿Cómo se hace?</div>
+            <div class="ex-desc-text">${ex.desc}</div>
+            ${ex.tip ? `<div class="ex-tip-box">💡 ${ex.tip}</div>` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+  updateProgress();
+}
+
+function selectDay(id) {
+  currentDay = id;
+  currentBlock = DAYS.find(d => d.id === id).blocks[0].id;
+  renderDayChips();
+  renderBlockPills();
+  renderExercises();
+  document.getElementById('completeBanner').classList.remove('show');
+}
+
+function selectBlock(id) {
+  currentBlock = id;
+  renderBlockPills();
+  renderExercises();
+}
+
+// ════════════════════════════════
+// PROGRESS
+// ════════════════════════════════
+function updateProgress() {
+  const day = DAYS.find(d => d.id === currentDay);
+  const allEx = day.blocks.flatMap(b => b.exercises);
+  const total = allEx.length;
+  const done = allEx.filter(ex => completedExercises[ex.id]).length;
+  const pct = total > 0 ? Math.round((done/total)*100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressCount').textContent = done + ' / ' + total;
+  document.getElementById('progressLabel').textContent = pct === 100 ? '✅ Día completo' : 'Progreso del día';
+  const banner = document.getElementById('completeBanner');
+  if (pct === 100 && done > 0) banner.classList.add('show');
+  else banner.classList.remove('show');
+}
+
+function isDayComplete(dayId) {
+  const day = DAYS.find(d => d.id === dayId);
+  if (!day) return false;
+  const allEx = day.blocks.flatMap(b => b.exercises);
+  return allEx.length > 0 && allEx.every(ex => completedExercises[ex.id]);
+}
+
+function toggleDone(exId) {
+  completedExercises[exId] = !completedExercises[exId];
+  if (!completedExercises[exId]) delete completedExercises[exId];
+  localStorage.setItem('completed', JSON.stringify(completedExercises));
+  const card = document.getElementById('card-' + exId);
+  const check = card.querySelector('.ex-check');
+  if (completedExercises[exId]) {
+    card.classList.add('completed');
+    check.textContent = '✓';
+  } else {
+    card.classList.remove('completed');
+    check.textContent = '';
+  }
+  updateProgress();
+  renderDayChips();
+}
+
+function toggleDetail(exId) {
+  const d = document.getElementById('detail-' + exId);
+  d.classList.toggle('open');
+}
+
+// ════════════════════════════════
+// TIMER
+// ════════════════════════════════
+function openTimer(sec, name) {
+  timerSeconds = sec;
+  timerTotal = sec;
+  timerRunning = false;
+  document.getElementById('timerExName').textContent = name || 'Descanso';
+  document.getElementById('timerToggleBtn').textContent = '▶ Iniciar';
+  updateTimerDisplay();
+  document.querySelectorAll('.timer-preset').forEach(p => p.classList.remove('sel'));
+  const presets = [60, 90, 120, 150];
+  const idx = presets.indexOf(sec);
+  if (idx >= 0) document.querySelectorAll('.timer-preset')[idx].classList.add('sel');
+  document.getElementById('timerOverlay').classList.add('open');
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+}
+
+function closeTimer() {
+  document.getElementById('timerOverlay').classList.remove('open');
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  timerRunning = false;
+}
+
+function setPreset(sec) {
+  if (timerRunning) return;
+  timerSeconds = sec;
+  timerTotal = sec;
+  document.querySelectorAll('.timer-preset').forEach(p => p.classList.remove('sel'));
+  event.target.classList.add('sel');
+  updateTimerDisplay();
+}
+
+function toggleTimer() {
+  if (timerRunning) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+    timerRunning = false;
+    document.getElementById('timerToggleBtn').textContent = '▶ Reanudar';
+  } else {
+    timerRunning = true;
+    document.getElementById('timerToggleBtn').textContent = '⏸ Pausar';
+    timerInterval = setInterval(() => {
+      timerSeconds--;
+      updateTimerDisplay();
+      if (timerSeconds <= 0) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        timerRunning = false;
+        document.getElementById('timerToggleBtn').textContent = '🔄 Reiniciar';
+        document.getElementById('timerLabel').textContent = '¡LISTO!';
+        if ('vibrate' in navigator) navigator.vibrate([200,100,200]);
+      }
+    }, 1000);
+  }
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(timerSeconds / 60);
+  const s = timerSeconds % 60;
+  document.getElementById('timerNum').textContent = m + ':' + (s < 10 ? '0' : '') + s;
+  const pct = timerTotal > 0 ? timerSeconds / timerTotal : 1;
+  const circ = 628;
+  document.getElementById('timerArc').style.strokeDashoffset = circ * (1 - pct);
+  document.getElementById('timerLabel').textContent = timerSeconds <= 0 ? '¡LISTO!' : 'DESCANSO';
+}
+
+// ════════════════════════════════
+// VIEWS
+// ════════════════════════════════
+function showView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  document.getElementById('nav-' + name).classList.add('active');
+  if (name === 'resumen') renderResumen();
+  if (name === 'buscar') document.getElementById('searchBar').focus();
+}
+
+// ════════════════════════════════
+// RESUMEN
+// ════════════════════════════════
+function renderResumen() {
+  const c = document.getElementById('resumenContent');
+  c.innerHTML = DAYS.map(day => {
+    const allEx = day.blocks.flatMap(b => b.exercises);
+    const done = allEx.filter(ex => completedExercises[ex.id]).length;
+    const pct = Math.round((done / allEx.length) * 100);
+    return `
+      <div class="res-day-card">
+        <div class="res-day-head">
+          <div>
+            <div class="res-day-name">${day.label}</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:2px;">${day.typeLabel}</div>
+          </div>
+          <div style="text-align:right;">
+            <span class="res-badge ${day.type === 'cali' ? 'badge-cali' : 'badge-pesas'}">${day.type === 'cali' ? 'Calistenia' : 'Pesas'}</span>
+            <div style="font-size:11px;color:${pct===100?'var(--green)':'var(--muted)'};margin-top:4px;font-weight:700;">${pct}% completado</div>
+          </div>
+        </div>
+        ${day.blocks.map(block => `
+          <div class="res-block">
+            <div class="res-block-title">${block.label}</div>
+            ${block.exercises.map(ex => `
+              <div class="res-ex" style="${completedExercises[ex.id] ? 'opacity:0.4;text-decoration:line-through;' : ''}">
+                <span>${ex.name}</span>
+                <span>${ex.tags[0] || ''}</span>
+              </div>
+            `).join('')}
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }).join('');
+}
+
+// ════════════════════════════════
+// SEARCH
+// ════════════════════════════════
+function qs(term) {
+  document.getElementById('searchBar').value = term;
+  doSearch();
+}
+
+function doSearch() {
+  const q = document.getElementById('searchBar').value.toLowerCase().trim();
+  const c = document.getElementById('searchResults');
+  if (!q) { c.innerHTML = '<p class="no-results">Buscá un ejercicio o tocá una etiqueta</p>'; return; }
+  const results = searchIndex.filter(e =>
+    e.name.toLowerCase().includes(q) ||
+    e.muscle.toLowerCase().includes(q) ||
+    e.tags.toLowerCase().includes(q) ||
+    e.day.toLowerCase().includes(q) ||
+    e.block.toLowerCase().includes(q) ||
+    e.desc.toLowerCase().includes(q)
+  );
+  if (!results.length) { c.innerHTML = '<p class="no-results">No encontré ejercicios. Probá con otra palabra.</p>'; return; }
+  c.innerHTML = results.map(e => `
+    <div class="sr-card">
+      <div class="sr-head">
+        <div class="sr-day">${e.day}</div>
+        <div class="sr-block">${e.block}</div>
+      </div>
+      <div class="sr-body">
+        <div class="sr-name">${e.name}</div>
+        <div class="sr-detail">${e.detail}</div>
+        <div class="sr-desc">${e.desc}</div>
+        <button class="img-btn" onclick="window.open('https://www.google.com/search?q=${e.img}&tbm=isch','_blank')">🔍 Ver imagen</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ════════════════════════════════
+// THEME
+// ════════════════════════════════
+let isDark = true;
+function toggleTheme() {
+  isDark = !isDark;
+  document.body.classList.toggle('light', !isDark);
+  document.getElementById('themeBtn').textContent = isDark ? '☀️' : '🌙';
+  localStorage.setItem('theme', isDark ? 'dark' : 'light');
+}
+
+// ════════════════════════════════
+// INIT
+// ════════════════════════════════
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme === 'light') { isDark = false; document.body.classList.add('light'); document.getElementById('themeBtn').textContent = '🌙'; }
+
+renderDayChips();
+renderBlockPills();
+renderExercises();
+</script>
+</body>
+</html>
